@@ -220,7 +220,7 @@ cursor:pointer; transition:all .2s; margin:0 6px;
       ダミーの選択肢も同じ動詞で異なるパターンが示されます
     </p>
   </div>
-  <button class="start-btn" onclick="startQuiz()">スタート ▶</button>
+  <button class="start-btn" id="startBtn">スタート ▶</button>
 </div>
 
 <!-- QUIZ -->
@@ -247,7 +247,7 @@ cursor:pointer; transition:all .2s; margin:0 6px;
 
   <div class="options" id="optsGrid"></div>
   <div class="feedback" id="feedback"></div>
-  <button class="next-btn" id="nextBtn" onclick="nextQ()">次の問題 →</button>
+  <button class="next-btn" id="nextBtn">次の問題 →</button>
 </div>
 
 <!-- RESULTS -->
@@ -262,12 +262,13 @@ cursor:pointer; transition:all .2s; margin:0 6px;
     <div class="rd-item"><div class="rd-val" id="rdT" style="color:var(--accent)">0</div><div class="rd-lbl">総問数</div></div>
   </div>
   <div class="result-msg" id="resMsg"></div>
-  <button class="retry-btn" onclick="showSetup()">設定に戻る</button>
-  <button class="retry-btn sec" onclick="retryQuiz()">もう一度</button>
+  <button class="retry-btn" id="setupReturnBtn">設定に戻る</button>
+  <button class="retry-btn sec" id="retryBtn">もう一度</button>
 </div>
 
 </main>
 <script>
+document.addEventListener("DOMContentLoaded", function() {
 // ═══════════════════════════════════════════════════════
 // DATA
 // correctForm  : 正解となる具体的な構文（動詞を当てはめたもの）
@@ -699,6 +700,12 @@ document.getElementById(‘setup-screen’).style.display = ‘block’;
 function retryQuiz() { document.getElementById(‘result-screen’).classList.remove(‘show’); startQuiz(); }
 
 buildCatFilter();
+
+document.getElementById(‘startBtn’).addEventListener(‘click’, startQuiz);
+document.getElementById(‘nextBtn’).addEventListener(‘click’, nextQ);
+document.getElementById(‘setupReturnBtn’).addEventListener(‘click’, showSetup);
+document.getElementById(‘retryBtn’).addEventListener(‘click’, retryQuiz);
+}); // end DOMContentLoaded
 </script>
 
 </body>
