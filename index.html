@@ -173,7 +173,7 @@ function startQuiz(){
   var n=sel==='all'?sh.length:Math.min(parseInt(sel),sh.length);
   qList=sh.slice(0,n);
   qIdx=0;cor=0;wrg=0;done=false;
-  d('setup','none');d('rs','none');d('quiz','');
+  d('setup','none');d('rs','none');d('quiz','block');
   renderQ();
 }
 
@@ -236,10 +236,10 @@ function showResult(){
     'よくできました！to/forの区別やto beの有無などを確認しましょう。',
     'ほぼ完璧！自信を持ってください。'];
   t('rm',msgs[pct>=90?3:pct>=75?2:pct>=55?1:0]);
-  d('rs','');
+  d('rs','block');
 }
 
-function goSetup(){d('rs','none');d('setup','');}
+function goSetup(){d('rs','none');d('setup','block');}
 </script>
 
 </body>
