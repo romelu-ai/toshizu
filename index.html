@@ -368,7 +368,7 @@ exampleEn:“Keep quiet during the exam.”, exampleJa:“試験中は静かに�
 exampleEn:“The weather held fine all week.”, exampleJa:“天気は一週間ずっと晴れのままだった。” },
 { verb:“lie”,      correctForm:“lie C”,    wrongForms:[“lie C + become”,“lie O C”,“lie O to do”],     meaning:“Cのままである”, usageLabel:”「…のままである」型”, usageGroup:“S+V+C”, table:“動詞表2”,
 exampleEn:“The city lay silent under the snow.”, exampleJa:“街は雪の下で静まりかえっていた。” },
-{ verb:“stay”,     correctForm:“stay C”,   wrongForms:[“stay C + become”,“stay O C”,“stay O to do”], meaning:“Cの状態のままである”, usageLabel:”「…のままである」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+{ verb:“stay”,     correctForm:“stay C”,   wrongForms:[“stay C + become”,“stay O C”,“stay O to do”], meaning:“Cの状態にある”, usageLabel:”「…のままである」型”, usageGroup:“S+V+C”, table:“動詞表2”,
 exampleEn:“Stay healthy and get enough sleep.”, exampleJa:“健康でいるために十分な睡眠をとりなさい。” },
 
 // (3) 「…になる」
@@ -402,9 +402,9 @@ exampleEn:“The roses smell wonderful.”, exampleJa:“バラがすばらし�
 exampleEn:“That idea sounds interesting.”, exampleJa:“そのアイデアはおもしろそうだ。” },
 { verb:“look”,     correctForm:“look C”,   wrongForms:[“look C + remain”,“look C + become”,“look on O as C”], meaning:“Cに見える”, usageLabel:”「…であると感ずる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
 exampleEn:“You look tired today.”, exampleJa:“あなたは今日疲れているように見える。” },
-{ verb:“appear”,   correctForm:“appear C”, wrongForms:[“appear C + remain”,“appear C + become”,“appear O C”], meaning:“Cのように思われる”, usageLabel:”「…であると感ずる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+{ verb:“appear”,   correctForm:“appear C”, wrongForms:[“appear C + remain”,“appear C + become”,“appear O C”], meaning:”（見て）Cのように思われる／Cに見える”, usageLabel:”「…であると感ずる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
 exampleEn:“He appeared nervous before the speech.”, exampleJa:“スピーチ前、彼は緊張しているように見えた。” },
-{ verb:“seem”,     correctForm:“seem C”,   wrongForms:[“seem C + remain”,“seem C + become”,“seem O C”], meaning:“Cのように思われる”, usageLabel:”「…であると感ずる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+{ verb:“seem”,     correctForm:“seem C”,   wrongForms:[“seem C + remain”,“seem C + become”,“seem O C”], meaning:”（見て）Cのように思われる／Cに見える”, usageLabel:”「…であると感ずる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
 exampleEn:“She seems happy with the result.”, exampleJa:“彼女は結果に満足しているようだ。” },
 
 // ════════════════════════════════
@@ -534,9 +534,9 @@ exampleEn:“He noticed someone following him.”, exampleJa:“彼は誰かが�
 // (6) 使役動詞
 { verb:“make”,     correctForm:“make O do”,  wrongForms:[“make O to do”,“make O C”,“make O as C”],     meaning:“Oに…させる〔強制〕”, usageLabel:“使役動詞型（V+O+do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
 exampleEn:“The cold weather made him stay indoors.”, exampleJa:“寒い天気のせいで彼は室内にこもった。” },
-{ verb:“let”,      correctForm:“let O do”,   wrongForms:[“let O to do”,“let O C”,“let O as C”],         meaning:“Oに…させる〔許可〕”, usageLabel:“使役動詞型（V+O+do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+{ verb:“let”,      correctForm:“let O do”,   wrongForms:[“let O to do”,“let O C”,“let O as C”],         meaning:“Oに…させる／するのを認める〔許可〕”, usageLabel:“使役動詞型（V+O+do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
 exampleEn:“She let her children stay up late.”, exampleJa:“彼女は子供たちが夜更かしするのを許した。” },
-{ verb:“have”,     correctForm:“have O do”,  wrongForms:[“have O to do”,“have O C”,“have O as C”],      meaning:“Oに…させる〔依頼〕”, usageLabel:“使役動詞型（V+O+do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+{ verb:“have”,     correctForm:“have O do”,  wrongForms:[“have O to do”,“have O C”,“have O as C”],      meaning:“Oに…させる／してもらう〔依頼〕（= get O to do）”, usageLabel:“使役動詞型（V+O+do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
 exampleEn:“I had him fix my bicycle.”, exampleJa:“私は彼に自転車を修理してもらった。” },
 ];
 
@@ -649,7 +649,21 @@ document.getElementById(‘statW’).textContent = wrong;
 document.getElementById(‘statR’).textContent = Math.round(correct / (qIdx + 1) * 100) + ‘%’;
 
 fb.className = `feedback ${isOk ? 'ok' : 'ng'} show`;
-fb.innerHTML = ` <div class="fb-head">${isOk ? '✓ 正解！' : '✗ 不正解'}</div> <div class="fb-correct-form">${q.correctForm}</div> <div class="fb-rows"> <div class="fb-row"><strong>意味</strong>${q.meaning}</div> <div class="fb-row"><strong>用法</strong>${q.usageLabel}</div> <div class="fb-row"><strong>文型</strong>${q.usageGroup}（${q.table}）</div> </div> <div class="fb-example"> <div class="fb-example-label">例文</div> <div class="fb-example-en">${q.exampleEn}</div> <div class="fb-example-ja">${q.exampleJa}</div> </div>`;
+const H = (s) => s; // helper
+fb.innerHTML = [
+`\x3cdiv class="fb-head">${isOk ? '✓ 正解！' : '✗ 不正解'}\x3c/div>`,
+`\x3cdiv class="fb-correct-form">${q.correctForm}\x3c/div>`,
+`\x3cdiv class="fb-rows">`,
+`\x3cdiv class="fb-row">\x3cstrong>意味\x3c/strong>${q.meaning}\x3c/div>`,
+`\x3cdiv class="fb-row">\x3cstrong>用法\x3c/strong>${q.usageLabel}\x3c/div>`,
+`\x3cdiv class="fb-row">\x3cstrong>文型\x3c/strong>${q.usageGroup}（${q.table}）\x3c/div>`,
+`\x3c/div>`,
+`\x3cdiv class="fb-example">`,
+`\x3cdiv class="fb-example-label">例文\x3c/div>`,
+`\x3cdiv class="fb-example-en">${q.exampleEn}\x3c/div>`,
+`\x3cdiv class="fb-example-ja">${q.exampleJa}\x3c/div>`,
+`\x3c/div>`,
+].join(’’);
 
 document.getElementById(‘nextBtn’).classList.add(‘show’);
 }
