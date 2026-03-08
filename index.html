@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英語動詞文型クイズ</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f14; --surface: #16181f; --card: #1e2029;
+    --accent: #e8c97a; --accent2: #7ab8e8; --accent3: #c87ae8;
+    --correct: #5dd68c; --wrong: #e87a7a;
+    --text: #e8e6df; --muted: #7a7d8a; --border: #2e3040;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(232,201,122,0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,201,122,0.022) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  header { width: 100%; max-width: 820px; padding: 36px 24px 10px; text-align: center; }
+  .title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px,5vw,42px); color: var(--accent); letter-spacing: .03em; margin-bottom: 4px;
+  }
+  .subtitle { font-size: 12px; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+
+.progress-wrap { width: 100%; max-width: 820px; height: 4px; background: var(–border); margin-top: 14px; }
+.progress-fill { height: 100%; background: linear-gradient(90deg,var(–accent),var(–accent2)); transition: width .4s ease; }
+
+main { width: 100%; max-width: 820px; padding: 20px 20px 50px; flex: 1; }
+
+/* ── Setup ── */
+#setup-screen { text-align: center; padding: 12px 0 44px; }
+#setup-screen h2 { font-family:‘Playfair Display’,serif; font-size:20px; color:var(–accent); margin-bottom:18px; }
+.setup-label { font-size:11px; color:var(–muted); letter-spacing:.1em; text-transform:uppercase; margin-bottom:10px; }
+.setup-section { margin-bottom:22px; }
+.cat-filter { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+.cat-tag {
+padding:7px 18px; border-radius:20px; border:1px solid var(–border);
+background:transparent; color:var(–muted); font-size:12px; cursor:pointer;
+font-family:‘Noto Sans JP’,sans-serif; transition:all .15s;
+}
+.cat-tag.on { border-color:var(–accent); color:var(–accent); background:rgba(232,201,122,.08); }
+.q-count-row { display:flex; align-items:center; justify-content:center; gap:12px; }
+.q-count-row label { font-size:13px; color:var(–muted); }
+.q-count-row select {
+padding:8px 12px; background:var(–surface); border:1px solid var(–border);
+border-radius:8px; color:var(–text); font-family:‘Noto Sans JP’,sans-serif; font-size:13px; cursor:pointer;
+}
+.start-btn {
+padding:14px 46px; background:var(–accent); color:#0e0f14;
+border:none; border-radius:12px; font-family:‘Noto Sans JP’,sans-serif;
+font-size:15px; font-weight:700; cursor:pointer; transition:all .2s; margin-top:10px;
+}
+.start-btn:hover { background:#f0d890; }
+.divider { width:36px; height:2px; background:var(–border); border-radius:1px; margin:18px auto; }
+
+/* ── Stats ── */
+.stats-bar {
+display:flex; gap:20px; justify-content:center;
+padding:12px 24px; margin-bottom:18px;
+background:var(–surface); border:1px solid var(–border); border-radius:12px;
+}
+.stat-item { display:flex; flex-direction:column; align-items:center; gap:2px; }
+.stat-val { font-size:20px; font-weight:700; font-family:‘Playfair Display’,serif; }
+.stat-val.c { color:var(–correct); } .stat-val.w { color:var(–wrong); } .stat-val.n { color:var(–accent); }
+.stat-label { color:var(–muted); font-size:10px; letter-spacing:.05em; }
+
+/* ── Question card ── */
+.q-card {
+background:var(–card); border:1px solid var(–border); border-radius:20px;
+padding:28px 36px 26px; margin-bottom:14px;
+position:relative; overflow:hidden;
+}
+.q-card::before {
+content:’’; position:absolute; top:0; left:0; right:0; height:3px;
+background:linear-gradient(90deg,var(–accent),var(–accent2),var(–accent3));
+}
+.qc-top { display:flex; align-items:flex-end; gap:14px; flex-wrap:wrap; margin-bottom:10px; }
+.qc-verb {
+font-family:‘Playfair Display’,serif; font-size:clamp(40px,7vw,60px);
+color:var(–accent); line-height:1;
+}
+.qc-num { font-size:11px; color:var(–muted); letter-spacing:.1em; text-transform:uppercase; padding-bottom:6px; }
+.qc-badges { display:flex; gap:8px; flex-wrap:wrap; }
+.badge {
+display:inline-flex; align-items:center; gap:5px;
+padding:3px 11px; border-radius:20px; border:1px solid var(–border);
+font-size:11px; color:var(–muted); letter-spacing:.05em;
+}
+.badge-dot { width:5px; height:5px; border-radius:50%; }
+.badge.table .badge-dot { background:var(–accent); }
+.badge.group .badge-dot { background:var(–accent2); }
+.qc-prompt { font-size:13px; color:var(–text); opacity:.75; margin-top:14px; }
+
+/* ── Options ── */
+.options { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+@media(max-width:520px){
+.options{grid-template-columns:1fr;}
+.q-card{padding:22px 18px 20px;}
+.stats-bar{gap:12px;padding:10px 16px;}
+}
+.opt-btn {
+padding:14px 16px; background:var(–surface); border:1px solid var(–border);
+border-radius:12px; color:var(–text); font-family:‘Noto Sans JP’,sans-serif;
+font-size:14px; cursor:pointer; text-align:left; transition:all .16s; line-height:1.4;
+font-family: ‘Courier New’, monospace;
+}
+.opt-btn:hover:not(:disabled) { border-color:var(–accent); background:#1f2130; transform:translateY(-1px); }
+.opt-btn.correct-ans { background:rgba(93,214,140,.12); border-color:var(–correct); color:var(–correct); }
+.opt-btn.wrong-ans   { background:rgba(232,122,122,.10); border-color:var(–wrong);   color:var(–wrong); }
+.opt-btn:disabled { cursor:default; transform:none; opacity:.65; }
+.opt-btn.correct-ans:disabled,.opt-btn.wrong-ans:disabled { opacity:1; }
+
+/* ── Feedback ── */
+.feedback {
+padding:14px 18px; border-radius:12px; font-size:13px; line-height:1.7;
+display:none; animation:fadeIn .25s ease; margin-bottom:14px;
+}
+.feedback.show { display:block; }
+.feedback.ok { background:rgba(93,214,140,.10); border:1px solid rgba(93,214,140,.3); }
+.feedback.ng { background:rgba(232,122,122,.10); border:1px solid rgba(232,122,122,.3); }
+.fb-head { font-size:15px; font-weight:700; margin-bottom:8px; }
+.feedback.ok .fb-head { color:var(–correct); }
+.feedback.ng .fb-head { color:var(–wrong); }
+.fb-correct-form {
+font-family:‘Courier New’,monospace; font-size:15px;
+color:var(–accent); margin-bottom:8px; padding:8px 12px;
+background:rgba(232,201,122,.07); border-radius:6px; display:inline-block;
+}
+.fb-rows { display:flex; flex-direction:column; gap:6px; margin-top:4px; }
+.fb-row { font-size:13px; color:#d4d2cc; line-height:1.5; }
+.fb-row strong { color:var(–accent2); font-size:11px; text-transform:uppercase; letter-spacing:.06em; margin-right:8px; font-weight:700; }
+.fb-example {
+margin-top:10px; padding:10px 14px;
+background:rgba(122,184,232,0.08); border-left:3px solid var(–accent2);
+border-radius:0 8px 8px 0;
+}
+.fb-example-label { font-size:10px; color:var(–accent2); text-transform:uppercase; letter-spacing:.08em; font-weight:700; margin-bottom:5px; }
+.fb-example-en { font-family:‘Courier New’,monospace; font-size:13px; color:#c8e4f5; line-height:1.6; }
+.fb-example-ja { font-size:12px; color:#a0b8c8; margin-top:4px; line-height:1.5; }
+
+/* ── Next ── */
+.next-btn {
+display:none; width:100%; padding:15px;
+background:var(–accent); color:#0e0f14; border:none; border-radius:14px;
+font-family:‘Noto Sans JP’,sans-serif; font-size:15px; font-weight:700;
+cursor:pointer; transition:all .2s; letter-spacing:.04em; margin-bottom:20px;
+}
+.next-btn:hover { background:#f0d890; transform:translateY(-1px); }
+.next-btn.show { display:block; animation:fadeIn .3s ease; }
+
+/* ── Results ── */
+#result-screen { display:none; text-align:center; padding:40px 20px; animation:fadeIn .5s ease; }
+#result-screen.show { display:block; }
+.result-score { font-family:‘Playfair Display’,serif; font-size:76px; color:var(–accent); line-height:1; margin:18px 0 6px; }
+.result-label { font-size:16px; color:var(–text); margin-bottom:8px; }
+.result-detail { display:flex; gap:28px; justify-content:center; margin:14px 0 26px; }
+.rd-item { text-align:center; }
+.rd-val { font-size:28px; font-weight:700; font-family:‘Playfair Display’,serif; }
+.rd-lbl { font-size:11px; color:var(–muted); }
+.result-msg { font-size:13px; color:var(–muted); margin-bottom:30px; line-height:1.8; }
+.retry-btn {
+padding:14px 40px; background:var(–accent); color:#0e0f14; border:none;
+border-radius:12px; font-family:‘Noto Sans JP’,sans-serif; font-size:14px; font-weight:700;
+cursor:pointer; transition:all .2s; margin:0 6px;
+}
+.retry-btn:hover { background:#f0d890; }
+.retry-btn.sec { background:transparent; color:var(–accent); border:1px solid var(–accent); }
+.retry-btn.sec:hover { background:rgba(232,201,122,.1); }
+
+#quiz-screen { display:none; }
+#quiz-screen.show { display:block; }
+
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+.card-in { animation:fadeIn .35s ease; }
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="title">Verb Pattern Quiz</div>
+  <div class="subtitle">英語動詞文型マスター — 用法パターン選択</div>
+</header>
+<div class="progress-wrap"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+
+<main>
+
+<!-- SETUP -->
+
+<div id="setup-screen">
+  <h2>出題設定</h2>
+  <div class="setup-section">
+    <div class="setup-label">カテゴリー選択</div>
+    <div class="cat-filter" id="catFilter"></div>
+  </div>
+  <div class="divider"></div>
+  <div class="setup-section">
+    <div class="setup-label">出題数</div>
+    <div class="q-count-row">
+      <select id="qCount">
+        <option value="10">10問</option>
+        <option value="20" selected>20問</option>
+        <option value="30">30問</option>
+        <option value="all">全問</option>
+      </select>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-top:10px;">
+      動詞の正しい用法構文を4択から選んでください<br>
+      ダミーの選択肢も同じ動詞で異なるパターンが示されます
+    </p>
+  </div>
+  <button class="start-btn" onclick="startQuiz()">スタート ▶</button>
+</div>
+
+<!-- QUIZ -->
+
+<div id="quiz-screen">
+  <div class="stats-bar">
+    <div class="stat-item"><span class="stat-val n" id="statQ">0</span><span class="stat-label">問目</span></div>
+    <div class="stat-item"><span class="stat-val c" id="statC">0</span><span class="stat-label">正解</span></div>
+    <div class="stat-item"><span class="stat-val w" id="statW">0</span><span class="stat-label">不正解</span></div>
+    <div class="stat-item"><span class="stat-val n" id="statR">—</span><span class="stat-label">正答率</span></div>
+  </div>
+
+  <div class="q-card card-in" id="qCard">
+    <div class="qc-top">
+      <div class="qc-verb" id="qVerb">—</div>
+      <div class="qc-num" id="qNum">1 / 20</div>
+    </div>
+    <div class="qc-badges">
+      <span class="badge table"><span class="badge-dot"></span><span id="badgeTable">—</span></span>
+      <span class="badge group"><span class="badge-dot"></span><span id="badgeGroup">—</span></span>
+    </div>
+    <div class="qc-prompt">この動詞の正しい用法構文を選んでください</div>
+  </div>
+
+  <div class="options" id="optsGrid"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()">次の問題 →</button>
+</div>
+
+<!-- RESULTS -->
+
+<div id="result-screen">
+  <div style="font-size:44px;margin-bottom:4px">🎓</div>
+  <div class="result-score" id="resScore">—</div>
+  <div class="result-label" id="resLabel">お疲れ様でした！</div>
+  <div class="result-detail">
+    <div class="rd-item"><div class="rd-val" id="rdC" style="color:var(--correct)">0</div><div class="rd-lbl">正解</div></div>
+    <div class="rd-item"><div class="rd-val" id="rdW" style="color:var(--wrong)">0</div><div class="rd-lbl">不正解</div></div>
+    <div class="rd-item"><div class="rd-val" id="rdT" style="color:var(--accent)">0</div><div class="rd-lbl">総問数</div></div>
+  </div>
+  <div class="result-msg" id="resMsg"></div>
+  <button class="retry-btn" onclick="showSetup()">設定に戻る</button>
+  <button class="retry-btn sec" onclick="retryQuiz()">もう一度</button>
+</div>
+
+</main>
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA
+// correctForm  : 正解となる具体的な構文（動詞を当てはめたもの）
+// wrongForms   : 同じ動詞を使った誤りパターン3つ（他の用法や文型の混在）
+// meaning      : 日本語の意味（フィードバック解説に使用）
+// usageLabel   : テキスト上の分類ラベル
+// usageGroup   : 大文型
+// table        : 動詞表番号
+// ═══════════════════════════════════════════════════════
+const DATA = [
+
+// ════════════════════════════════
+// 動詞表1  S+V+O₁+O₂
+// ════════════════════════════════
+
+// (1) give O₁O₂ = give O₂ to O₁ 型
+{ verb:“allow”,    correctForm:“allow O₁ O₂  (= allow O₂ to O₁)”,    wrongForms:[“allow O to do”,“allow O as C”,“allow O (to be) C”],            meaning:“O₁にO₂を与える”,            usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“The judge allowed him a final statement.”, exampleJa:“裁判官は彼に最終陳述の機会を与えた。” },
+{ verb:“bring”,    correctForm:“bring O₁ O₂  (= bring O₂ to O₁)”,    wrongForms:[“bring O to do”,“bring O as C”,“bring O (to be) C”],            meaning:“O₁にO₂をもたらす”,          usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“His arrival brought us great joy.”, exampleJa:“彼の到着は私たちに大きな喜びをもたらした。” },
+{ verb:“deny”,     correctForm:“deny O₁ O₂  (= deny O₂ to O₁)”,      wrongForms:[“deny O to do”,“deny O as C”,“deny O C”],                       meaning:“O₁にO₂を与えない”,          usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“They denied him access to the building.”, exampleJa:“彼らは彼に建物への入場を拒否した。” },
+{ verb:“do”,       correctForm:“do O₁ O₂  (= do O₂ to O₁)”,          wrongForms:[“do O to do”,“do O as C”,“do O C”],                             meaning:“O₁にO₂をもたらす／与える”,  usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“Exercise will do you a lot of good.”, exampleJa:“運動はあなたに大きな恩恵をもたらすだろう。” },
+{ verb:“hand”,     correctForm:“hand O₁ O₂  (= hand O₂ to O₁)”,      wrongForms:[“hand O to do”,“hand O as C”,“hand O C”],                       meaning:“O₁にO₂を手渡す”,            usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“She handed him the envelope.”, exampleJa:“彼女は彼に封筒を手渡した。” },
+{ verb:“lend”,     correctForm:“lend O₁ O₂  (= lend O₂ to O₁)”,      wrongForms:[“lend O to do”,“lend O as C”,“lend O C”],                       meaning:“O₁にO₂を貸す”,              usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“Could you lend me your dictionary?”, exampleJa:“辞書を貸していただけますか？” },
+{ verb:“offer”,    correctForm:“offer O₁ O₂  (= offer O₂ to O₁)”,    wrongForms:[“offer O to do”,“offer O as C”,“offer O C”],                    meaning:“O₁にO₂を申し出る”,          usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“They offered him a higher salary.”, exampleJa:“彼らは彼により高い給料を提示した。” },
+{ verb:“owe”,      correctForm:“owe O₁ O₂  (= owe O₂ to O₁)”,        wrongForms:[“owe O to do”,“owe O as C”,“owe O C”],                          meaning:“O₁にO₂を借りる／負う”,      usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“I owe you an apology.”, exampleJa:“あなたに謝罪しなければなりません。” },
+{ verb:“pass”,     correctForm:“pass O₁ O₂  (= pass O₂ to O₁)”,      wrongForms:[“pass O to do”,“pass O as C”,“pass O C”],                       meaning:“O₁にO₂を手渡す／回す”,      usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“Please pass me the salt.”, exampleJa:“塩を回してください。” },
+{ verb:“pay”,      correctForm:“pay O₁ O₂  (= pay O₂ to O₁)”,        wrongForms:[“pay O to do”,“pay O as C”,“pay O C”],                          meaning:“O₁にO₂を払う”,              usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“The company paid him a bonus.”, exampleJa:“会社は彼にボーナスを支払った。” },
+{ verb:“promise”,  correctForm:“promise O₁ O₂  (= promise O₂ to O₁)”, wrongForms:[“promise O to do”,“promise O as C”,“promise O C”],             meaning:“O₁にO₂を約束する”,          usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“He promised her a diamond ring.”, exampleJa:“彼は彼女にダイヤの指輪を約束した。” },
+{ verb:“read”,     correctForm:“read O₁ O₂  (= read O₂ to O₁)”,      wrongForms:[“read O to do”,“read O as C”,“read O C”],                       meaning:“O₁にO₂を読んで聞かせる”,    usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“She read the children a bedtime story.”, exampleJa:“彼女は子供たちに寝る前の話を読み聞かせた。” },
+{ verb:“sell”,     correctForm:“sell O₁ O₂  (= sell O₂ to O₁)”,      wrongForms:[“sell O to do”,“sell O as C”,“sell O C”],                       meaning:“O₁にO₂を売る”,              usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“He sold me his old car for a low price.”, exampleJa:“彼は私に古い車を安く売ってくれた。” },
+{ verb:“send”,     correctForm:“send O₁ O₂  (= send O₂ to O₁)”,      wrongForms:[“send O to do”,“send O as C”,“send O C”],                       meaning:“O₁にO₂を送る”,              usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“She sent him a long letter.”, exampleJa:“彼女は彼に長い手紙を送った。” },
+{ verb:“show”,     correctForm:“show O₁ O₂  (= show O₂ to O₁)”,      wrongForms:[“show O to do”,“show O as C”,“show O (to be) C”],               meaning:“O₁にO₂を見せる／教える”,    usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“Can you show me the way to the station?”, exampleJa:“駅への道を教えていただけますか？” },
+{ verb:“take”,     correctForm:“take O₁ O₂  (= take O₂ to O₁)”,      wrongForms:[“take O₁ O₂  (= take O₂ for O₁)”,“take O to do”,“take O C”],  meaning:“O₁にO₂を持っていく”,        usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“He took her some flowers.”, exampleJa:“彼は彼女に花を持っていった。” },
+{ verb:“teach”,    correctForm:“teach O₁ O₂  (= teach O₂ to O₁)”,    wrongForms:[“teach O to do”,“teach O as C”,“teach O C”],                    meaning:“O₁にO₂を教える”,            usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“She taught us English grammar.”, exampleJa:“彼女は私たちに英文法を教えた。” },
+{ verb:“tell”,     correctForm:“tell O₁ O₂  (= tell O₂ to O₁)”,      wrongForms:[“tell O to do”,“tell O as C”,“tell O C”],                       meaning:“O₁にO₂を話す”,              usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“Tell me the truth.”, exampleJa:“本当のことを話してください。” },
+{ verb:“write”,    correctForm:“write O₁ O₂  (= write O₂ to O₁)”,    wrongForms:[“write O to do”,“write O as C”,“write O C”],                    meaning:“O₁にO₂を書く”,              usageLabel:“give O₁O₂ = give O₂ to O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“He wrote her a long email.”, exampleJa:“彼は彼女に長いメールを書いた。” },
+
+// (2) buy O₁O₂ = buy O₂ for O₁ 型
+{ verb:“buy”,      correctForm:“buy O₁ O₂  (= buy O₂ for O₁)”,       wrongForms:[“buy O₁ O₂  (= buy O₂ to O₁)”,“buy O to do”,“buy O C”],        meaning:“O₁にO₂を買ってやる”,        usageLabel:“buy O₁O₂ = buy O₂ for O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“He bought his son a new bicycle.”, exampleJa:“彼は息子に新しい自転車を買ってやった。” },
+{ verb:“choose”,   correctForm:“choose O₁ O₂  (= choose O₂ for O₁)”, wrongForms:[“choose O₁ O₂  (= choose O₂ to O₁)”,“choose O to do”,“choose O C”], meaning:“O₁にO₂を選んでやる”, usageLabel:“buy O₁O₂ = buy O₂ for O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“She chose him a nice tie.”, exampleJa:“彼女は彼に素敵なネクタイを選んであげた。” },
+{ verb:“cook”,     correctForm:“cook O₁ O₂  (= cook O₂ for O₁)”,     wrongForms:[“cook O₁ O₂  (= cook O₂ to O₁)”,“cook O to do”,“cook O C”],    meaning:“O₁にO₂を料理してやる”,      usageLabel:“buy O₁O₂ = buy O₂ for O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“She cooked him a delicious meal.”, exampleJa:“彼女は彼においしい料理を作ってあげた。” },
+{ verb:“find”,     correctForm:“find O₁ O₂  (= find O₂ for O₁)”,     wrongForms:[“find O₁ O₂  (= find O₂ to O₁)”,“find O to do”,“find O (to be) C”], meaning:“O₁にO₂を見つけてやる”, usageLabel:“buy O₁O₂ = buy O₂ for O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“Can you find me a good hotel?”, exampleJa:“良いホテルを見つけてもらえますか？” },
+{ verb:“get”,      correctForm:“get O₁ O₂  (= get O₂ for O₁)”,       wrongForms:[“get O₁ O₂  (= get O₂ to O₁)”,“get O to do”,“get O C”],        meaning:“O₁にO₂を入手してやる”,      usageLabel:“buy O₁O₂ = buy O₂ for O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“Could you get me a glass of water?”, exampleJa:“水を一杯持ってきていただけますか？” },
+{ verb:“leave”,    correctForm:“leave O₁ O₂  (= leave O₂ for O₁)”,   wrongForms:[“leave O₁ O₂  (= leave O₂ to O₁)”,“leave O to do”,“leave O C”], meaning:“O₁にO₂を残してやる”,       usageLabel:“buy O₁O₂ = buy O₂ for O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“Leave me some cake, please.”, exampleJa:“ケーキを少し残しておいてください。” },
+{ verb:“make”,     correctForm:“make O₁ O₂  (= make O₂ for O₁)”,     wrongForms:[“make O₁ O₂  (= make O₂ to O₁)”,“make O do”,“make O C”],       meaning:“O₁にO₂を作ってやる”,        usageLabel:“buy O₁O₂ = buy O₂ for O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“She made him a cup of tea.”, exampleJa:“彼女は彼にお茶を一杯作ってあげた。” },
+{ verb:“order”,    correctForm:“order O₁ O₂  (= order O₂ for O₁)”,   wrongForms:[“order O₁ O₂  (= order O₂ to O₁)”,“order O to do”,“order O C”], meaning:“O₁にO₂を注文する”,          usageLabel:“buy O₁O₂ = buy O₂ for O₁ 型”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“He ordered her a pizza.”, exampleJa:“彼は彼女のためにピザを注文した。” },
+
+// (3) 注意すべきもの（to/for いずれも不可）
+{ verb:“take”,     correctForm:“take O₁ O₂  (to も for も不可)”,      wrongForms:[“take O₁ O₂  (= take O₂ to O₁)”,“take O₁ O₂  (= take O₂ for O₁)”,“take O to do”], meaning:“O₁にO₂かかる（時間・費用）”, usageLabel:“注意型：to／for いずれも不可”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“It took me two hours to finish the report.”, exampleJa:“報告書を仕上げるのに2時間かかった。” },
+{ verb:“cost”,     correctForm:“cost O₁ O₂  (to も for も不可)”,      wrongForms:[“cost O₁ O₂  (= cost O₂ to O₁)”,“cost O₁ O₂  (= cost O₂ for O₁)”,“cost O to do”], meaning:“O₁にO₂かかる（費用）”,         usageLabel:“注意型：to／for いずれも不可”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“The repair cost him a lot of money.”, exampleJa:“修理に彼は多額のお金がかかった。” },
+{ verb:“save”,     correctForm:“save O₁ O₂  (to も for も不可)”,      wrongForms:[“save O₁ O₂  (= save O₂ to O₁)”,“save O₁ O₂  (= save O₂ for O₁)”,“save O to do”], meaning:“O₁にO₂をかけさせない／省く”, usageLabel:“注意型：to／for いずれも不可”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“Taking the shortcut saved us an hour.”, exampleJa:“近道を通ったおかげで1時間省けた。” },
+{ verb:“spare”,    correctForm:“spare O₁ O₂  (to も for も不可)”,     wrongForms:[“spare O₁ O₂  (= spare O₂ to O₁)”,“spare O₁ O₂  (= spare O₂ for O₁)”,“spare O to do”], meaning:“O₁にO₂をかけさせない／省く”, usageLabel:“注意型：to／for いずれも不可”, usageGroup:“S+V+O₁+O₂”, table:“動詞表1”,
+exampleEn:“Can you spare me five minutes?”, exampleJa:“5分ほどお時間をいただけますか？” },
+
+// ════════════════════════════════
+// 動詞表2  S+V+C
+// ════════════════════════════════
+
+// (1) 「…である」
+{ verb:“be”,       correctForm:“be C”,     wrongForms:[“be C + remain”,“be C + become”,“be O C”],   meaning:“Cである”, usageLabel:”「…である」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“She is a brilliant scientist.”, exampleJa:“彼女は優秀な科学者だ。” },
+
+// (2) 「…のままである」
+{ verb:“remain”,   correctForm:“remain C”, wrongForms:[“remain C + become”,“remain O C”,“remain O to do”], meaning:“Cのままである”, usageLabel:”「…のままである」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“He remained calm during the crisis.”, exampleJa:“彼は危機の間も冷静なままでいた。” },
+{ verb:“keep”,     correctForm:“keep C”,   wrongForms:[“keep C + become”,“keep O C”,“keep O (to be) C”], meaning:“Cのままである”, usageLabel:”「…のままである」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“Keep quiet during the exam.”, exampleJa:“試験中は静かにしていなさい。” },
+{ verb:“hold”,     correctForm:“hold C”,   wrongForms:[“hold C + become”,“hold O (to be) C”,“hold O as C”], meaning:“Cのままである”, usageLabel:”「…のままである」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“The weather held fine all week.”, exampleJa:“天気は一週間ずっと晴れのままだった。” },
+{ verb:“lie”,      correctForm:“lie C”,    wrongForms:[“lie C + become”,“lie O C”,“lie O to do”],     meaning:“Cのままである”, usageLabel:”「…のままである」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“The city lay silent under the snow.”, exampleJa:“街は雪の下で静まりかえっていた。” },
+{ verb:“stay”,     correctForm:“stay C”,   wrongForms:[“stay C + become”,“stay O C”,“stay O to do”], meaning:“Cの状態のままである”, usageLabel:”「…のままである」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“Stay healthy and get enough sleep.”, exampleJa:“健康でいるために十分な睡眠をとりなさい。” },
+
+// (3) 「…になる」
+{ verb:“become”,   correctForm:“become C”, wrongForms:[“become C + remain”,“become O C”,“become O to do”], meaning:“Cになる”, usageLabel:”「…になる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“She became a famous novelist.”, exampleJa:“彼女は有名な小説家になった。” },
+{ verb:“get”,      correctForm:“get C”,    wrongForms:[“get C + remain”,“get O C”,“get O to do”],     meaning:“Cになる”, usageLabel:”「…になる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“It’s getting dark outside.”, exampleJa:“外が暗くなってきた。” },
+{ verb:“grow”,     correctForm:“grow C”,   wrongForms:[“grow C + remain”,“grow O C”,“grow O to do”], meaning:“Cになる”, usageLabel:”「…になる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“He grew impatient waiting for the reply.”, exampleJa:“彼は返事を待ってじれったくなってきた。” },
+{ verb:“turn”,     correctForm:“turn C”,   wrongForms:[“turn C + remain”,“turn O C”,“turn C + feel”], meaning:“Cになる”, usageLabel:”「…になる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“The leaves turned red in autumn.”, exampleJa:“秋になると葉が赤くなった。” },
+{ verb:“come”,     correctForm:“come C”,   wrongForms:[“come C + remain”,“come O C”,“come C + feel”], meaning:“Cの状態になる”, usageLabel:”「…になる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“His dream came true at last.”, exampleJa:“ついに彼の夢が実現した。” },
+{ verb:“go”,       correctForm:“go C”,     wrongForms:[“go C + remain”,“go O C”,“go C + feel”],       meaning:“Cの状態になる”, usageLabel:”「…になる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“Don’t let the milk go bad.”, exampleJa:“牛乳を腐らせないようにしなさい。” },
+{ verb:“fall”,     correctForm:“fall C”,   wrongForms:[“fall C + remain”,“fall O C”,“fall C + feel”], meaning:“Cの状態になる”, usageLabel:”「…になる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“He fell ill after the long journey.”, exampleJa:“長旅の後、彼は病気になった。” },
+{ verb:“run”,      correctForm:“run C”,    wrongForms:[“run C + remain”,“run O C”,“run O to do”],     meaning:“Cの状態になる”, usageLabel:”「…になる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“The river ran dry during the drought.”, exampleJa:“干ばつで川が干上がった。” },
+{ verb:“prove”,    correctForm:“prove C”,  wrongForms:[“prove O (to be) C”,“prove C + remain”,“prove O as C”], meaning:“結果としてCとなる”, usageLabel:”「…になる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“The plan proved successful in the end.”, exampleJa:“その計画は結果的に成功した。” },
+
+// (4) 「…であると感ずる」
+{ verb:“feel”,     correctForm:“feel C”,   wrongForms:[“feel C + remain”,“feel O (to be) C”,“feel O do”], meaning:“Cの感じがする”, usageLabel:”「…であると感ずる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“The water feels cold.”, exampleJa:“水が冷たく感じる。” },
+{ verb:“taste”,    correctForm:“taste C”,  wrongForms:[“taste C + remain”,“taste C + become”,“taste O C”], meaning:“Cの味がする”, usageLabel:”「…であると感ずる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“This soup tastes salty.”, exampleJa:“このスープは塩辛い味がする。” },
+{ verb:“smell”,    correctForm:“smell C”,  wrongForms:[“smell C + remain”,“smell C + become”,“smell O do”], meaning:“Cの匂いがする”, usageLabel:”「…であると感ずる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“The roses smell wonderful.”, exampleJa:“バラがすばらしい香りを放っている。” },
+{ verb:“sound”,    correctForm:“sound C”,  wrongForms:[“sound C + remain”,“sound C + become”,“sound O C”], meaning:“Cに聞こえる”, usageLabel:”「…であると感ずる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“That idea sounds interesting.”, exampleJa:“そのアイデアはおもしろそうだ。” },
+{ verb:“look”,     correctForm:“look C”,   wrongForms:[“look C + remain”,“look C + become”,“look on O as C”], meaning:“Cに見える”, usageLabel:”「…であると感ずる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“You look tired today.”, exampleJa:“あなたは今日疲れているように見える。” },
+{ verb:“appear”,   correctForm:“appear C”, wrongForms:[“appear C + remain”,“appear C + become”,“appear O C”], meaning:“Cのように思われる”, usageLabel:”「…であると感ずる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“He appeared nervous before the speech.”, exampleJa:“スピーチ前、彼は緊張しているように見えた。” },
+{ verb:“seem”,     correctForm:“seem C”,   wrongForms:[“seem C + remain”,“seem C + become”,“seem O C”], meaning:“Cのように思われる”, usageLabel:”「…であると感ずる」型”, usageGroup:“S+V+C”, table:“動詞表2”,
+exampleEn:“She seems happy with the result.”, exampleJa:“彼女は結果に満足しているようだ。” },
+
+// ════════════════════════════════
+// 動詞表3  S+V+O+C
+// ════════════════════════════════
+
+// (1) make OC型
+{ verb:“make”,     correctForm:“make O C”,  wrongForms:[“make O (to be) C”,“make O as C”,“make O do”],      meaning:“OをCにする”, usageLabel:“make OC型（V+O+C）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“Hard work made him successful.”, exampleJa:“努力が彼を成功させた。” },
+{ verb:“get”,      correctForm:“get O C”,   wrongForms:[“get O to do”,“get O as C”,“get O (to be) C”],      meaning:“OをCにする”, usageLabel:“make OC型（V+O+C）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“Get your room clean before dinner.”, exampleJa:“夕食前に部屋をきれいにしなさい。” },
+{ verb:“set”,      correctForm:“set O C”,   wrongForms:[“set O to do”,“set O as C”,“set O (to be) C”],      meaning:“OをCにする”, usageLabel:“make OC型（V+O+C）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“The news set her heart racing.”, exampleJa:“その知らせに彼女の心臓はどきどきした。” },
+{ verb:“turn”,     correctForm:“turn O C”,  wrongForms:[“turn O to do”,“turn O as C”,“turn O (to be) C”],   meaning:“OをCにする”, usageLabel:“make OC型（V+O+C）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“Autumn turns the leaves red.”, exampleJa:“秋は葉を赤くする。” },
+{ verb:“keep”,     correctForm:“keep O C”,  wrongForms:[“keep O to do”,“keep O as C”,“keep O (to be) C”],   meaning:“OをCにしておく”, usageLabel:“make OC型（V+O+C）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“Keep the door open, please.”, exampleJa:“ドアを開けたままにしておいてください。” },
+{ verb:“leave”,    correctForm:“leave O C”, wrongForms:[“leave O to do”,“leave O as C”,“leave O (to be) C”], meaning:“OをCにしておく”, usageLabel:“make OC型（V+O+C）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“Don’t leave the window open.”, exampleJa:“窓を開けっ放しにしないでください。” },
+{ verb:“call”,     correctForm:“call O C”,  wrongForms:[“call O to do”,“call O as C”,“call O (to be) C”],   meaning:“OをCと呼ぶ”, usageLabel:“make OC型（V+O+C）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“They called the baby Emma.”, exampleJa:“彼らはその赤ちゃんをエマと名付けた。” },
+{ verb:“name”,     correctForm:“name O C”,  wrongForms:[“name O to do”,“name O as C”,“name O (to be) C”],   meaning:“OをCと名付ける”, usageLabel:“make OC型（V+O+C）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“They named their son after his grandfather.”, exampleJa:“彼らは息子を祖父にちなんで命名した。” },
+{ verb:“choose”,   correctForm:“choose O C”,wrongForms:[“choose O to do”,“choose O as C”,“choose O (to be) C”], meaning:“OをCに選ぶ”, usageLabel:“make OC型（V+O+C）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“The team chose him captain.”, exampleJa:“チームは彼をキャプテンに選んだ。” },
+
+// (2) think O (to be) C型
+{ verb:“think”,    correctForm:“think O (to be) C”,    wrongForms:[“think O C”,“think of O as C”,“think O to do”],  meaning:“OがCであると思う”, usageLabel:“think O (to be) C型”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“I think him (to be) honest.”, exampleJa:“私は彼が誠実だと思う。” },
+{ verb:“believe”,  correctForm:“believe O (to be) C”,  wrongForms:[“believe O C”,“believe O as C”,“believe O to do”], meaning:“OがCであると信じる”, usageLabel:“think O (to be) C型”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“They believed him (to be) innocent.”, exampleJa:“彼らは彼が無実だと信じた。” },
+{ verb:“presume”,  correctForm:“presume O (to be) C”,  wrongForms:[“presume O C”,“presume O as C”,“presume O to do”], meaning:“OがCであると想定する”, usageLabel:“think O (to be) C型”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“I presume him (to be) guilty.”, exampleJa:“私は彼が有罪だと思っている。” },
+{ verb:“suppose”,  correctForm:“suppose O (to be) C”,  wrongForms:[“suppose O C”,“suppose O as C”,“suppose O to do”], meaning:“OがCであると思う”, usageLabel:“think O (to be) C型”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“I supposed him (to be) a doctor.”, exampleJa:“私は彼が医者だと思っていた。” },
+{ verb:“consider”, correctForm:“consider O (to be) C”, wrongForms:[“consider O C”,“consider O as C”,“consider O to do”], meaning:“OがCであると考える”, usageLabel:“think O (to be) C型”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“We consider the plan (to be) risky.”, exampleJa:“私たちはその計画を危険だと考えている。” },
+{ verb:“hold”,     correctForm:“hold O (to be) C”,     wrongForms:[“hold O C”,“hold O as C”,“hold O to do”],        meaning:“OがCであると思う”, usageLabel:“think O (to be) C型”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“The court held him (to be) liable.”, exampleJa:“裁判所は彼に責任があると判断した。” },
+{ verb:“imagine”,  correctForm:“imagine O (to be) C”,  wrongForms:[“imagine O C”,“imagine O as C”,“imagine O to do”], meaning:“OがCであると思う”, usageLabel:“think O (to be) C型”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“She imagined him (to be) very rich.”, exampleJa:“彼女は彼がとても金持ちだと思い込んでいた。” },
+{ verb:“feel”,     correctForm:“feel O (to be) C”,     wrongForms:[“feel O C”,“feel O as C”,“feel O do”],            meaning:“OがCであると感じる”, usageLabel:“think O (to be) C型”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“I felt the idea (to be) worthwhile.”, exampleJa:“私はそのアイデアが価値あるものだと感じた。” },
+{ verb:“find”,     correctForm:“find O (to be) C”,     wrongForms:[“find O C”,“find O as C”,“find O to do”],         meaning:“OがCであるとわかる”, usageLabel:“think O (to be) C型”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“She found the book (to be) boring.”, exampleJa:“彼女はその本が退屈だとわかった。” },
+{ verb:“show”,     correctForm:“show O (to be) C”,     wrongForms:[“show O C”,“show O as C”,“show O₁ O₂”],           meaning:“OがCであると示す”, usageLabel:“think O (to be) C型”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“The data showed the theory (to be) correct.”, exampleJa:“データはその理論が正しいことを示した。” },
+{ verb:“prove”,    correctForm:“prove O (to be) C”,    wrongForms:[“prove O C”,“prove O as C”,“prove C”],             meaning:“OがCであると証明する”, usageLabel:“think O (to be) C型”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“He proved the defendant (to be) innocent.”, exampleJa:“彼は被告が無実であることを証明した。” },
+
+// (3) regard O as C型
+{ verb:“regard”,   correctForm:“regard O as C”,        wrongForms:[“regard O (to be) C”,“regard O C”,“regard O to do”],      meaning:“OをCとみなす”, usageLabel:“regard O as C型（V+O+as+C）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“We regard honesty as essential.”, exampleJa:“私たちは誠実さを不可欠なものとみなしている。” },
+{ verb:“think of”, correctForm:“think of O as C”,      wrongForms:[“think of O (to be) C”,“think of O C”,“think of O to do”],  meaning:“OをCとみなす”, usageLabel:“regard O as C型（V+O+as+C）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“I think of him as a close friend.”, exampleJa:“私は彼を親友とみなしている。” },
+{ verb:“look on”,  correctForm:“look on O as C”,       wrongForms:[“look on O (to be) C”,“look on O C”,“look on O to do”],    meaning:“OをCとみなす”, usageLabel:“regard O as C型（V+O+as+C）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“They look on him as a leader.”, exampleJa:“彼らは彼をリーダーとみなしている。” },
+{ verb:“see”,      correctForm:“see O as C”,           wrongForms:[“see O (to be) C”,“see O do”,“see O doing”],               meaning:“OをCとみなす”, usageLabel:“regard O as C型（V+O+as+C）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“She sees herself as a pioneer.”, exampleJa:“彼女は自分を先駆者だとみなしている。” },
+
+// (4) allow O to do型
+{ verb:“allow”,    correctForm:“allow O to do”,        wrongForms:[“allow O do”,“allow O doing”,“allow O as C”],              meaning:“Oが…するのを認める”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“They allowed him to leave early.”, exampleJa:“彼らは彼が早退することを許可した。” },
+{ verb:“permit”,   correctForm:“permit O to do”,       wrongForms:[“permit O do”,“permit O doing”,“permit O as C”],           meaning:“Oが…するのを許す”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“They did not permit him to enter.”, exampleJa:“彼らは彼が入ることを許可しなかった。” },
+{ verb:“admit”,    correctForm:“admit O to do”,        wrongForms:[“admit O do”,“admit O doing”,“admit O as C”],              meaning:“Oが…するのを認める”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“The rule admits him to vote.”, exampleJa:“その規則は彼が投票することを認めている。” },
+{ verb:“help”,     correctForm:“help O (to) do”,       wrongForms:[“help O to doing”,“help O as C”,“help O (to be) C”],       meaning:“Oが…するのを手伝う”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“He helped me (to) carry the luggage.”, exampleJa:“彼は私が荷物を運ぶのを手伝ってくれた。” },
+{ verb:“force”,    correctForm:“force O to do”,        wrongForms:[“force O do”,“force O as C”,“force O (to be) C”],          meaning:“Oに…させる〔強制〕”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“They forced him to sign the document.”, exampleJa:“彼らは彼に書類に署名させた。” },
+{ verb:“compel”,   correctForm:“compel O to do”,       wrongForms:[“compel O do”,“compel O as C”,“compel O (to be) C”],       meaning:“Oに…させる〔強制〕”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“The situation compelled him to resign.”, exampleJa:“状況が彼を辞任せざるを得なくさせた。” },
+{ verb:“oblige”,   correctForm:“oblige O to do”,       wrongForms:[“oblige O do”,“oblige O as C”,“oblige O (to be) C”],       meaning:“Oに…させる〔強制〕”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“The law obliges drivers to wear seatbelts.”, exampleJa:“法律はドライバーにシートベルトの着用を義務づけている。” },
+{ verb:“cause”,    correctForm:“cause O to do”,        wrongForms:[“cause O do”,“cause O as C”,“cause O (to be) C”],          meaning:“Oに…させる〔原因〕”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“The noise caused him to wake up.”, exampleJa:“その騒音のせいで彼は目が覚めた。” },
+{ verb:“enable”,   correctForm:“enable O to do”,       wrongForms:[“enable O do”,“enable O as C”,“enable O (to be) C”],       meaning:“Oに…できるようにする”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“The scholarship enabled her to study abroad.”, exampleJa:“奨学金のおかげで彼女は留学できた。” },
+{ verb:“teach”,    correctForm:“teach O to do”,        wrongForms:[“teach O do”,“teach O₁ O₂”,“teach O (to be) C”],           meaning:“Oに…するように教える”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“She taught him to play the piano.”, exampleJa:“彼女は彼にピアノの弾き方を教えた。” },
+{ verb:“tell”,     correctForm:“tell O to do”,         wrongForms:[“tell O do”,“tell O₁ O₂”,“tell O (to be) C”],              meaning:“Oに…せよと言う”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“She told him to wait outside.”, exampleJa:“彼女は彼に外で待つよう言った。” },
+{ verb:“order”,    correctForm:“order O to do”,        wrongForms:[“order O do”,“order O₁ O₂”,“order O as C”],                meaning:“Oに…するように命ずる”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“The general ordered the troops to advance.”, exampleJa:“将軍は部隊に前進を命じた。” },
+{ verb:“advise”,   correctForm:“advise O to do”,       wrongForms:[“advise O do”,“advise O as C”,“advise O (to be) C”],       meaning:“Oに…するよう忠告する”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“The doctor advised him to rest.”, exampleJa:“医師は彼に休むよう忠告した。” },
+{ verb:“persuade”, correctForm:“persuade O to do”,     wrongForms:[“persuade O do”,“persuade O as C”,“persuade O (to be) C”], meaning:“Oに…するよう説得する”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“She persuaded him to change his mind.”, exampleJa:“彼女は彼に考えを変えるよう説得した。” },
+{ verb:“lead”,     correctForm:“lead O to do”,         wrongForms:[“lead O do”,“lead O as C”,“lead O (to be) C”],             meaning:“Oに…する気にさせる”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“Curiosity led him to explore the cave.”, exampleJa:“好奇心が彼を洞窟の探索へと向かわせた。” },
+{ verb:“drive”,    correctForm:“drive O to do”,        wrongForms:[“drive O do”,“drive O as C”,“drive O (to be) C”],          meaning:“Oに…するようりたてる”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“Desperation drove him to steal.”, exampleJa:“絶望が彼を盗みへと駆り立てた。” },
+{ verb:“encourage”,correctForm:“encourage O to do”,    wrongForms:[“encourage O do”,“encourage O as C”,“encourage O (to be) C”], meaning:“Oに…するようはげます”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“He encouraged her to keep trying.”, exampleJa:“彼は彼女に挑戦し続けるよう励ました。” },
+{ verb:“ask”,      correctForm:“ask O to do”,          wrongForms:[“ask O do”,“ask O as C”,“ask O (to be) C”],                meaning:“Oに…するように頼む”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“I asked him to help me.”, exampleJa:“私は彼に手伝ってくれるよう頼んだ。” },
+{ verb:“expect”,   correctForm:“expect O to do”,       wrongForms:[“expect O do”,“expect O as C”,“expect O (to be) C”],       meaning:“Oに…して欲しいと期待する”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“I expect you to be on time.”, exampleJa:“あなたには時間通りに来てほしい。” },
+{ verb:“request”,  correctForm:“request O to do”,      wrongForms:[“request O do”,“request O as C”,“request O (to be) C”],    meaning:“Oに…するよう要求する”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“The teacher requested the students to be quiet.”, exampleJa:“先生は生徒たちに静かにするよう求めた。” },
+{ verb:“want”,     correctForm:“want O to do”,         wrongForms:[“want O do”,“want O as C”,“want O (to be) C”],             meaning:“Oに…してもらいたい”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“I want you to tell the truth.”, exampleJa:“あなたに本当のことを言ってほしい。” },
+{ verb:“wish”,     correctForm:“wish O to do”,         wrongForms:[“wish O do”,“wish O as C”,“wish O (to be) C”],             meaning:“Oに…してもらいたい”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“I wish you to be happy.”, exampleJa:“あなたに幸せでいてほしい。” },
+{ verb:“like”,     correctForm:“like O to do”,         wrongForms:[“like O do”,“like O as C”,“like O (to be) C”],             meaning:“Oに…してもらいたい”, usageLabel:“allow O to do型（V+O+to do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“I like you to knock before entering.”, exampleJa:“入る前にノックしてもらいたい。” },
+
+// (5) 知覚動詞
+{ verb:“see”,      correctForm:“see O do / doing / done”,    wrongForms:[“see O to do”,“see O as C”,“see O (to be) C”],          meaning:“Oが…するのを見る”, usageLabel:“知覚動詞型（V+O+do/doing/done）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“I saw him cross the street. / I saw him crossing the street.”, exampleJa:“私は彼が通りを渡るのを見た。／渡っているのを見た。” },
+{ verb:“watch”,    correctForm:“watch O do / doing / done”,  wrongForms:[“watch O to do”,“watch O as C”,“watch O (to be) C”],    meaning:“Oが…するのを見る”, usageLabel:“知覚動詞型（V+O+do/doing/done）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“We watched the children play in the park.”, exampleJa:“私たちは子供たちが公園で遊ぶのを見ていた。” },
+{ verb:“look at”,  correctForm:“look at O do / doing / done”,wrongForms:[“look at O to do”,“look at O as C”,“look at O (to be) C”], meaning:“Oが…するのを見る”, usageLabel:“知覚動詞型（V+O+do/doing/done）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“She looked at the cat sleeping on the sofa.”, exampleJa:“彼女はソファで眠る猫を見ていた。” },
+{ verb:“hear”,     correctForm:“hear O do / doing / done”,   wrongForms:[“hear O to do”,“hear O as C”,“hear O (to be) C”],       meaning:“Oが…するのを聞く”, usageLabel:“知覚動詞型（V+O+do/doing/done）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“I heard him sing a beautiful song.”, exampleJa:“私は彼が美しい歌を歌うのを聞いた。” },
+{ verb:“listen to”,correctForm:“listen to O do / doing”,     wrongForms:[“listen to O to do”,“listen to O as C”,“listen to O (to be) C”], meaning:“Oが…するのを聞く”, usageLabel:“知覚動詞型（V+O+do/doing/done）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“She listened to the birds singing outside.”, exampleJa:“彼女は外で鳴く鳥の声に耳を傾けた。” },
+{ verb:“feel”,     correctForm:“feel O do / doing”,          wrongForms:[“feel O to do”,“feel O (to be) C”,“feel O as C”],        meaning:“Oが…するのを感じる”, usageLabel:“知覚動詞型（V+O+do/doing/done）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“I felt something touch my shoulder.”, exampleJa:“何かが肩に触れるのを感じた。” },
+{ verb:“perceive”, correctForm:“perceive O do / doing”,      wrongForms:[“perceive O to do”,“perceive O as C”,“perceive O (to be) C”], meaning:“Oが…するのを知る”, usageLabel:“知覚動詞型（V+O+do/doing/done）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“She perceived the situation changing rapidly.”, exampleJa:“彼女は状況が急速に変わりつつあるのを感じ取った。” },
+{ verb:“notice”,   correctForm:“notice O do / doing”,        wrongForms:[“notice O to do”,“notice O as C”,“notice O (to be) C”],  meaning:“Oが…するのに気づく”, usageLabel:“知覚動詞型（V+O+do/doing/done）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“He noticed someone following him.”, exampleJa:“彼は誰かが自分の後をつけていることに気づいた。” },
+
+// (6) 使役動詞
+{ verb:“make”,     correctForm:“make O do”,  wrongForms:[“make O to do”,“make O C”,“make O as C”],     meaning:“Oに…させる〔強制〕”, usageLabel:“使役動詞型（V+O+do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“The cold weather made him stay indoors.”, exampleJa:“寒い天気のせいで彼は室内にこもった。” },
+{ verb:“let”,      correctForm:“let O do”,   wrongForms:[“let O to do”,“let O C”,“let O as C”],         meaning:“Oに…させる〔許可〕”, usageLabel:“使役動詞型（V+O+do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“She let her children stay up late.”, exampleJa:“彼女は子供たちが夜更かしするのを許した。” },
+{ verb:“have”,     correctForm:“have O do”,  wrongForms:[“have O to do”,“have O C”,“have O as C”],      meaning:“Oに…させる〔依頼〕”, usageLabel:“使役動詞型（V+O+do）”, usageGroup:“S+V+O+C”, table:“動詞表3”,
+exampleEn:“I had him fix my bicycle.”, exampleJa:“私は彼に自転車を修理してもらった。” },
+];
+
+const ALL_TABLES = […new Set(DATA.map(d => d.table))];
+
+// ═══════════════ STATE ═══════════════
+let selectedTables = new Set(ALL_TABLES);
+let qList = [];
+let qIdx = 0;
+let correct = 0;
+let wrong = 0;
+let answered = false;
+
+// ═══════════════ SETUP ═══════════════
+function buildCatFilter() {
+const cf = document.getElementById(‘catFilter’);
+ALL_TABLES.forEach(t => {
+const btn = document.createElement(‘button’);
+btn.className = ‘cat-tag on’;
+btn.textContent = t;
+btn.onclick = () => {
+if (selectedTables.has(t)) {
+if (selectedTables.size <= 1) return;
+selectedTables.delete(t); btn.classList.remove(‘on’);
+} else {
+selectedTables.add(t); btn.classList.add(‘on’);
+}
+};
+cf.appendChild(btn);
+});
+}
+
+function shuffle(a) {
+for (let i = a.length - 1; i > 0; i–) {
+const j = Math.floor(Math.random() * (i + 1));
+[a[i], a[j]] = [a[j], a[i]];
+}
+return a;
+}
+
+function startQuiz() {
+const pool = DATA.filter(d => selectedTables.has(d.table));
+if (pool.length < 4) { alert(‘カテゴリーをもっと選んでください’); return; }
+const sel = document.getElementById(‘qCount’).value;
+const sh = shuffle([…pool]);
+const n = sel === ‘all’ ? sh.length : Math.min(parseInt(sel), sh.length);
+qList = sh.slice(0, n);
+qIdx = 0; correct = 0; wrong = 0; answered = false;
+
+document.getElementById(‘setup-screen’).style.display = ‘none’;
+document.getElementById(‘result-screen’).classList.remove(‘show’);
+document.getElementById(‘quiz-screen’).classList.add(‘show’);
+renderQ();
+}
+
+// ═══════════════ RENDER ═══════════════
+function renderQ() {
+if (qIdx >= qList.length) { showResults(); return; }
+answered = false;
+const q = qList[qIdx];
+
+document.getElementById(‘progressBar’).style.width = (qIdx / qList.length * 100) + ‘%’;
+document.getElementById(‘statQ’).textContent = qIdx + 1;
+document.getElementById(‘statC’).textContent = correct;
+document.getElementById(‘statW’).textContent = wrong;
+document.getElementById(‘statR’).textContent = qIdx === 0 ? ‘—’ : Math.round(correct / qIdx * 100) + ‘%’;
+
+document.getElementById(‘qVerb’).textContent = q.verb;
+document.getElementById(‘qNum’).textContent = `${qIdx + 1} / ${qList.length}`;
+document.getElementById(‘badgeTable’).textContent = q.table;
+document.getElementById(‘badgeGroup’).textContent = q.usageGroup;
+
+document.getElementById(‘qCard’).classList.remove(‘card-in’);
+void document.getElementById(‘qCard’).offsetWidth;
+document.getElementById(‘qCard’).classList.add(‘card-in’);
+
+const fb = document.getElementById(‘feedback’);
+fb.className = ‘feedback’; fb.innerHTML = ‘’;
+document.getElementById(‘nextBtn’).classList.remove(‘show’);
+
+// Build 4 options: correctForm + 3 wrongForms (shuffled)
+const opts = shuffle([q.correctForm, …q.wrongForms]);
+const grid = document.getElementById(‘optsGrid’);
+grid.innerHTML = ‘’;
+opts.forEach(opt => {
+const btn = document.createElement(‘button’);
+btn.className = ‘opt-btn’;
+btn.textContent = opt;
+btn.onclick = () => answer(btn, opt, q);
+grid.appendChild(btn);
+});
+}
+
+function answer(btn, chosen, q) {
+if (answered) return;
+answered = true;
+
+document.querySelectorAll(’.opt-btn’).forEach(b => {
+b.disabled = true;
+if (b.textContent === q.correctForm) b.classList.add(‘correct-ans’);
+});
+
+const fb = document.getElementById(‘feedback’);
+const isOk = chosen === q.correctForm;
+if (isOk) { correct++; btn.classList.add(‘correct-ans’); }
+else       { wrong++;   btn.classList.add(‘wrong-ans’); }
+
+document.getElementById(‘statC’).textContent = correct;
+document.getElementById(‘statW’).textContent = wrong;
+document.getElementById(‘statR’).textContent = Math.round(correct / (qIdx + 1) * 100) + ‘%’;
+
+fb.className = `feedback ${isOk ? 'ok' : 'ng'} show`;
+fb.innerHTML = ` <div class="fb-head">${isOk ? '✓ 正解！' : '✗ 不正解'}</div> <div class="fb-correct-form">${q.correctForm}</div> <div class="fb-rows"> <div class="fb-row"><strong>意味</strong>${q.meaning}</div> <div class="fb-row"><strong>用法</strong>${q.usageLabel}</div> <div class="fb-row"><strong>文型</strong>${q.usageGroup}（${q.table}）</div> </div> <div class="fb-example"> <div class="fb-example-label">例文</div> <div class="fb-example-en">${q.exampleEn}</div> <div class="fb-example-ja">${q.exampleJa}</div> </div>`;
+
+document.getElementById(‘nextBtn’).classList.add(‘show’);
+}
+
+function nextQ() { qIdx++; renderQ(); }
+
+// ═══════════════ RESULTS ═══════════════
+function showResults() {
+document.getElementById(‘quiz-screen’).classList.remove(‘show’);
+document.getElementById(‘progressBar’).style.width = ‘100%’;
+const total = qList.length;
+const pct = Math.round(correct / total * 100);
+document.getElementById(‘resScore’).textContent = pct + ‘%’;
+document.getElementById(‘resLabel’).textContent = `${total}問中 ${correct}問正解`;
+document.getElementById(‘rdC’).textContent = correct;
+document.getElementById(‘rdW’).textContent = wrong;
+document.getElementById(‘rdT’).textContent = total;
+const msgs = [
+‘💪 基礎から整理しましょう。カテゴリーを絞って繰り返すのが効果的です。’,
+‘📚 半分以上正解！用法パターンの細部を意識して復習しましょう。’,
+‘👍 よくできました！to/for の区別や to be の有無などを確認しましょう。’,
+‘🏆 ほぼ完璧！自信を持ってください。’
+];
+document.getElementById(‘resMsg’).textContent = msgs[pct >= 90 ? 3 : pct >= 75 ? 2 : pct >= 55 ? 1 : 0];
+document.getElementById(‘result-screen’).classList.add(‘show’);
+}
+
+function showSetup() {
+document.getElementById(‘result-screen’).classList.remove(‘show’);
+document.getElementById(‘quiz-screen’).classList.remove(‘show’);
+document.getElementById(‘setup-screen’).style.display = ‘block’;
+}
+function retryQuiz() { document.getElementById(‘result-screen’).classList.remove(‘show’); startQuiz(); }
+
+buildCatFilter();
+</script>
+
+</body>
+</html>
