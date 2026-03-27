@@ -8,29 +8,44 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0e0f14;color:#e8e6df;font-family:Arial,sans-serif;min-height:100vh;padding:0 0 40px}
-#app{max-width:740px;margin:0 auto;padding:16px}
+#app{max-width:760px;margin:0 auto;padding:16px}
 h1{font-size:24px;color:#e8c97a;text-align:center;padding:18px 0 4px}
-.sub{text-align:center;font-size:11px;color:#666;letter-spacing:.1em;margin-bottom:18px}
+.sub{text-align:center;font-size:11px;color:#666;letter-spacing:.1em;margin-bottom:12px}
+
+/* NAV TABS */
+#navtabs{display:flex;gap:0;border-bottom:1px solid #2a2c38;margin-bottom:16px}
+.ntb{flex:1;padding:10px 6px;background:none;border:none;color:#666;font-size:12px;font-family:Arial,sans-serif;cursor:pointer;letter-spacing:.05em;border-bottom:2px solid transparent;transition:all .2s}
+.ntb.act{color:#e8c97a;border-bottom-color:#e8c97a}
+.ntb:hover:not(.act){color:#aaa}
+
 #pb{height:4px;background:#2a2c38;border-radius:2px;margin-bottom:16px}
-#pbi{height:4px;background:#e8c97a;border-radius:2px;width:0}
-/* SETUP */
+#pbi{height:4px;background:#e8c97a;border-radius:2px;width:0;transition:width .3s}
+
+/* PAGE VISIBILITY */
+.page{display:none}
+.page.show{display:block}
+
+/* ===== SETUP ===== */
 #setup{text-align:center;padding:10px 0 24px}
 #setup h2{font-size:17px;color:#e8c97a;margin-bottom:16px}
 .sl{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
 #cw{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
-.cb{padding:6px 16px;border-radius:20px;border:1px solid #333;background:none;color:#666;font-size:13px;cursor:pointer;font-family:Arial,sans-serif}
+.cb{padding:6px 16px;border-radius:20px;border:1px solid #333;background:none;color:#666;font-size:13px;cursor:pointer;font-family:Arial,sans-serif;transition:all .2s}
 .cb.on{border-color:#e8c97a;color:#e8c97a;background:rgba(232,201,122,.08)}
 .cr{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px}
-#qc{padding:7px 10px;background:#16181f;border:1px solid #333;border-radius:8px;color:#e8e6df;font-size:13px}
+#qcnt{padding:7px 10px;background:#16181f;border:1px solid #333;border-radius:8px;color:#e8e6df;font-size:13px}
 #sb{padding:13px 40px;background:#e8c97a;color:#0e0f14;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif}
-/* STATS */
+#sb:hover{background:#f5d882}
+
+/* ===== STATS BAR ===== */
 #st{display:flex;gap:14px;justify-content:center;padding:10px;background:#16181f;border:1px solid #2a2c38;border-radius:10px;margin-bottom:14px}
 .si{display:flex;flex-direction:column;align-items:center;gap:2px}
 .sv{font-size:20px;font-weight:700}.sl2{font-size:10px;color:#666}
 .gc{color:#5dd68c}.rw{color:#e87a7a}.yn{color:#e8c97a}
-/* CARD */
+
+/* ===== CARD ===== */
 #qc2{background:#1e2029;border:1px solid #2a2c38;border-radius:16px;padding:22px 26px 18px;margin-bottom:12px;position:relative;overflow:hidden}
-#qc2:before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#e8c97a,#7ab8e8)}
+#qc2:before{content:’’;position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#e8c97a,#7ab8e8)}
 .ct{display:flex;align-items:flex-end;gap:12px;margin-bottom:8px;flex-wrap:wrap}
 #qv{font-size:44px;color:#e8c97a;font-weight:700;line-height:1}
 #qn{font-size:11px;color:#666;padding-bottom:6px}
@@ -39,29 +54,34 @@ h1{font-size:24px;color:#e8c97a;text-align:center;padding:18px 0 4px}
 .b1{border-color:rgba(232,201,122,.3);color:#e8c97a}
 .b2{border-color:rgba(122,184,232,.3);color:#7ab8e8}
 .pt{font-size:13px;color:#a0a0a0}
-/* OPTS */
+
+/* ===== OPTIONS ===== */
 #og{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.ob{padding:12px 14px;background:#16181f;border:1px solid #2a2c38;border-radius:10px;color:#e8e6df;font-family:'Courier New',monospace;font-size:13px;cursor:pointer;text-align:left;line-height:1.5;width:100%}
-.ob:hover{border-color:#e8c97a;background:#1a1c28}
-.bok{background:rgba(93,214,140,.12);border-color:#5dd68c;color:#5dd68c}
-.bng{background:rgba(232,122,122,.10);border-color:#e87a7a;color:#e87a7a}
-/* FB */
+.ob{padding:12px 14px;background:#16181f;border:1px solid #2a2c38;border-radius:10px;color:#e8e6df;font-family:‘Courier New’,monospace;font-size:13px;cursor:pointer;text-align:left;line-height:1.5;width:100%;transition:all .15s}
+.ob:hover:not(:disabled){border-color:#e8c97a;background:#1a1c28}
+.bok{background:rgba(93,214,140,.12)!important;border-color:#5dd68c!important;color:#5dd68c!important}
+.bng{background:rgba(232,122,122,.10)!important;border-color:#e87a7a!important;color:#e87a7a!important}
+
+/* ===== FEEDBACK ===== */
 #fb{display:none;border-radius:10px;padding:14px 16px;margin-bottom:12px;line-height:1.6}
 #fb.ok{background:rgba(93,214,140,.10);border:1px solid rgba(93,214,140,.3)}
 #fb.ng{background:rgba(232,122,122,.10);border:1px solid rgba(232,122,122,.3)}
 #fbh{font-size:14px;font-weight:700;margin-bottom:7px}
 .ok #fbh{color:#5dd68c}.ng #fbh{color:#e87a7a}
-#fbf{font-family:'Courier New',monospace;font-size:14px;color:#e8c97a;padding:6px 10px;background:rgba(232,201,122,.07);border-radius:5px;margin-bottom:8px;display:block}
+#fbf{font-family:‘Courier New’,monospace;font-size:14px;color:#e8c97a;padding:6px 10px;background:rgba(232,201,122,.07);border-radius:5px;margin-bottom:8px;display:block}
 .fr{font-size:12px;color:#c8c6c0;margin-bottom:3px}
 .fr b{color:#7ab8e8;font-size:10px;text-transform:uppercase;letter-spacing:.05em;margin-right:6px}
 #fe{margin-top:8px;padding:8px 12px;background:rgba(122,184,232,.08);border-left:3px solid #7ab8e8;border-radius:0 6px 6px 0}
 #fel{font-size:10px;color:#7ab8e8;text-transform:uppercase;letter-spacing:.07em;font-weight:700;margin-bottom:4px}
-#fee{font-family:'Courier New',monospace;font-size:12px;color:#c8e4f5}
+#fee{font-family:‘Courier New’,monospace;font-size:12px;color:#c8e4f5}
 #fej{font-size:12px;color:#90a8b8;margin-top:3px}
-/* NEXT */
+
+/* ===== NEXT BTN ===== */
 #nb{display:none;width:100%;padding:13px;background:#e8c97a;color:#0e0f14;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:16px;font-family:Arial,sans-serif}
-/* RESULT */
-#rs{display:none;text-align:center;padding:32px 0}
+#nb:hover{background:#f5d882}
+
+/* ===== RESULT ===== */
+#rs{text-align:center;padding:32px 0}
 #rp{font-size:64px;font-weight:700;color:#e8c97a;line-height:1;margin:12px 0 5px}
 #rl{font-size:15px;margin-bottom:8px}
 .rr{display:flex;gap:22px;justify-content:center;margin:12px 0 20px}
@@ -71,93 +91,264 @@ h1{font-size:24px;color:#e8c97a;text-align:center;padding:18px 0 4px}
 .rb{padding:11px 28px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;margin:0 4px;font-family:Arial,sans-serif}
 #r1{background:#e8c97a;color:#0e0f14;border:none}
 #r2{background:none;color:#e8c97a;border:1px solid #e8c97a}
-@media(max-width:480px){#og{grid-template-columns:1fr}#qv{font-size:34px}#qc2{padding:16px 14px}}
+#r3{background:none;color:#e87a7a;border:1px solid #e87a7a;margin-top:10px}
+#r3:disabled{opacity:.35;cursor:not-allowed}
+
+/* ===== LIST VIEW ===== */
+#listpage{padding-bottom:20px}
+.lf{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.lf select,.lf input{padding:7px 10px;background:#16181f;border:1px solid #333;border-radius:8px;color:#e8e6df;font-size:13px;font-family:Arial,sans-serif}
+.lf input{flex:1;min-width:120px}
+.lf input::placeholder{color:#555}
+.ltb{width:100%;border-collapse:collapse;font-size:12px}
+.ltb th{background:#16181f;color:#7ab8e8;font-size:10px;text-transform:uppercase;letter-spacing:.06em;padding:8px 10px;border-bottom:1px solid #2a2c38;text-align:left;position:sticky;top:0;z-index:1}
+.ltb td{padding:8px 10px;border-bottom:1px solid #1e2029;vertical-align:top;line-height:1.5}
+.ltb tr:hover td{background:#16181f}
+.lv{font-size:15px;font-weight:700;color:#e8c97a;font-family:‘Courier New’,monospace}
+.lcf{font-family:‘Courier New’,monospace;color:#c8e4f5;font-size:12px}
+.lm{color:#a0a0a0;font-size:11px}
+.lul{font-size:10px;padding:2px 7px;border-radius:10px;border:1px solid #2a2c38;color:#666;white-space:nowrap}
+.ltb-wrap{max-height:600px;overflow-y:auto;border:1px solid #2a2c38;border-radius:10px}
+.lcount{font-size:11px;color:#666;margin-bottom:8px}
+.tb1{border-color:rgba(232,201,122,.3);color:#e8c97a}
+.tb2{border-color:rgba(122,184,232,.3);color:#7ab8e8}
+.tb3{border-color:rgba(93,214,140,.3);color:#5dd68c}
+
+/* ===== REVIEW PAGE ===== */
+#reviewpage{padding-bottom:20px}
+.rvempty{text-align:center;padding:40px 20px;color:#555;font-size:14px}
+.rvempty span{font-size:32px;display:block;margin-bottom:10px}
+.rvsummary{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap}
+.rvsummary span{font-size:13px;color:#888}
+.rvsummary em{color:#e87a7a;font-style:normal;font-weight:700}
+.rvbtns{display:flex;gap:8px}
+.rvbtn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;border:none}
+#rv-start{background:#e87a7a;color:#0e0f14}
+#rv-clear{background:none;color:#e87a7a;border:1px solid #e87a7a;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif}
+.rvcard{background:#1e2029;border:1px solid #2a2c38;border-radius:12px;padding:14px 16px;margin-bottom:10px;position:relative}
+.rvcard:before{content:’’;position:absolute;top:0;left:0;bottom:0;width:3px;background:#e87a7a;border-radius:3px 0 0 3px}
+.rvc-v{font-size:22px;font-weight:700;color:#e8c97a;font-family:‘Courier New’,monospace;margin-bottom:4px}
+.rvc-cf{font-family:‘Courier New’,monospace;font-size:13px;color:#c8e4f5;margin-bottom:4px}
+.rvc-m{font-size:12px;color:#a0a0a0;margin-bottom:6px}
+.rvc-ex{font-size:11px;color:#7ab8e8;font-family:‘Courier New’,monospace;padding:5px 8px;background:rgba(122,184,232,.06);border-radius:4px}
+.rvc-exj{font-size:11px;color:#90a8b8;margin-top:2px}
+.rvc-del{position:absolute;top:10px;right:12px;background:none;border:none;color:#444;cursor:pointer;font-size:16px;padding:2px 6px}
+.rvc-del:hover{color:#e87a7a}
+
+/* REVIEW QUIZ mode (reuse quiz styles) */
+#rvq-area{}
+
+@media(max-width:480px){
+#og{grid-template-columns:1fr}
+#qv{font-size:34px}
+#qc2{padding:16px 14px}
+.ltb th:nth-child(4),.ltb td:nth-child(4){display:none}
+.ltb th:nth-child(5),.ltb td:nth-child(5){display:none}
+}
 </style>
+
 </head>
 <body>
 <div id="app">
   <h1>Verb Pattern Quiz</h1>
   <div class="sub">英語動詞文型マスター</div>
+
+  <!-- NAV -->
+
+  <div id="navtabs">
+    <button class="ntb act" onclick="showPage('quiz')">📝 クイズ</button>
+    <button class="ntb" onclick="showPage('list')">📋 一覧表</button>
+    <button class="ntb" onclick="showPage('review')">❌ 復習 <span id="rv-badge"></span></button>
+  </div>
+
   <div id="pb"><div id="pbi"></div></div>
 
-  <div id="setup">
-    <h2>出題設定</h2>
-    <div class="sl">カテゴリー選択</div>
-    <div id="cw"></div>
-    <div class="sl">出題数</div>
-    <div class="cr">
-      <select id="qc">
-        <option value="10">10問</option>
-        <option value="20" selected>20問</option>
-        <option value="30">30問</option>
-        <option value="all">全問</option>
-      </select>
-    </div>
-    <button id="sb" onclick="startQuiz()">スタート</button>
-  </div>
+  <!-- ===== QUIZ PAGE ===== -->
 
-  <div id="quiz" style="display:none">
-    <div id="st">
-      <div class="si"><span class="sv yn" id="s0">0</span><span class="sl2">問目</span></div>
-      <div class="si"><span class="sv gc" id="s1">0</span><span class="sl2">正解</span></div>
-      <div class="si"><span class="sv rw" id="s2">0</span><span class="sl2">不正解</span></div>
-      <div class="si"><span class="sv yn" id="s3">-</span><span class="sl2">正答率</span></div>
-    </div>
-    <div id="qc2">
-      <div class="ct"><div id="qv">-</div><div id="qn">1/1</div></div>
-      <div class="bg"><span class="bx b1" id="bt">-</span><span class="bx b2" id="bu">-</span></div>
-      <div class="pt">正しい用法構文を選んでください</div>
-    </div>
-    <div id="og"></div>
-    <div id="fb">
-      <div id="fbh"></div>
-      <span id="fbf"></span>
-      <div id="fbr"></div>
-      <div id="fe"><div id="fel">例文</div><div id="fee"></div><div id="fej"></div></div>
-    </div>
-    <button id="nb" onclick="nextQ()">次の問題</button>
-  </div>
+  <div id="quiz" class="page show">
 
-  <div id="rs">
-    <div style="font-size:40px">&#127891;</div>
-    <div id="rp">-</div><div id="rl">お疲れ様でした</div>
-    <div class="rr">
-      <div class="rd"><div class="rdv gc" id="rc">0</div><div class="rdl">正解</div></div>
-      <div class="rd"><div class="rdv rw" id="rw">0</div><div class="rdl">不正解</div></div>
-      <div class="rd"><div class="rdv yn" id="rt">0</div><div class="rdl">総問数</div></div>
-    </div>
-    <div id="rm"></div>
+```
+<!-- SETUP -->
+<div id="setup">
+  <h2>出題設定</h2>
+  <div class="sl">カテゴリー選択</div>
+  <div id="cw"></div>
+  <div class="sl">出題数</div>
+  <div class="cr">
+    <select id="qcnt">
+      <option value="10">10問</option>
+      <option value="20" selected>20問</option>
+      <option value="30">30問</option>
+      <option value="all">全問</option>
+    </select>
+  </div>
+  <button id="sb" onclick="startQuiz()">スタート</button>
+</div>
+
+<!-- QUIZ AREA -->
+<div id="qarea" style="display:none">
+  <div id="st">
+    <div class="si"><span class="sv yn" id="s0">0</span><span class="sl2">問目</span></div>
+    <div class="si"><span class="sv gc" id="s1">0</span><span class="sl2">正解</span></div>
+    <div class="si"><span class="sv rw" id="s2">0</span><span class="sl2">不正解</span></div>
+    <div class="si"><span class="sv yn" id="s3">-</span><span class="sl2">正答率</span></div>
+  </div>
+  <div id="qc2">
+    <div class="ct"><div id="qv">-</div><div id="qn">1/1</div></div>
+    <div class="bg"><span class="bx b1" id="bt">-</span><span class="bx b2" id="bu">-</span></div>
+    <div class="pt">正しい用法構文を選んでください</div>
+  </div>
+  <div id="og"></div>
+  <div id="fb">
+    <div id="fbh"></div>
+    <span id="fbf"></span>
+    <div id="fbr"></div>
+    <div id="fe"><div id="fel">例文</div><div id="fee"></div><div id="fej"></div></div>
+  </div>
+  <button id="nb" onclick="nextQ()">次の問題</button>
+</div>
+
+<!-- RESULT -->
+<div id="rs" style="display:none">
+  <div style="font-size:40px">🎓</div>
+  <div id="rp">-</div><div id="rl">お疲れ様でした</div>
+  <div class="rr">
+    <div class="rd"><div class="rdv gc" id="rc">0</div><div class="rdl">正解</div></div>
+    <div class="rd"><div class="rdv rw" id="rw2">0</div><div class="rdl">不正解</div></div>
+    <div class="rd"><div class="rdv yn" id="rt">0</div><div class="rdl">総問数</div></div>
+  </div>
+  <div id="rm"></div>
+  <div>
     <button class="rb" id="r1" onclick="startQuiz()">もう一度</button>
     <button class="rb" id="r2" onclick="goSetup()">設定に戻る</button>
   </div>
+  <div style="margin-top:10px">
+    <button class="rb" id="r3" onclick="goReviewFromResult()">❌ 間違いを復習する</button>
+  </div>
 </div>
+```
+
+  </div><!-- /quiz page -->
+
+  <!-- ===== LIST PAGE ===== -->
+
+  <div id="listpage" class="page">
+    <div class="lf">
+      <select id="lf-tb" onchange="renderList()">
+        <option value="">全カテゴリー</option>
+        <option value="1">動詞表1 (S+V+O1+O2)</option>
+        <option value="2">動詞表2 (S+V+C)</option>
+        <option value="3">動詞表3 (S+V+O+C)</option>
+      </select>
+      <select id="lf-ul" onchange="renderList()">
+        <option value="">全用法</option>
+      </select>
+      <input id="lf-q" type="text" placeholder="動詞で絞り込み…" oninput="renderList()">
+    </div>
+    <div class="lcount" id="lcount"></div>
+    <div class="ltb-wrap">
+      <table class="ltb">
+        <thead>
+          <tr>
+            <th>動詞</th>
+            <th>正しい構文</th>
+            <th>意味 / 例文</th>
+            <th>用法</th>
+            <th>表</th>
+          </tr>
+        </thead>
+        <tbody id="ltbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== REVIEW PAGE ===== -->
+
+  <div id="reviewpage" class="page">
+    <div id="rv-list-area"></div>
+    <div id="rvq-area" style="display:none">
+      <!-- reuses quiz-style markup dynamically -->
+    </div>
+  </div>
+
+</div><!-- /app -->
 
 <script>
 var DATA=[{"v":"allow","cf":"allow O1 O2 (= allow O2 to O1)","wf":["allow O to do","allow O as C","allow O (to be) C"],"m":"O1にO2を与える","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"The judge allowed him a final statement.","ja":"裁判官は彼に最終陳述の機会を与えた。"},{"v":"bring","cf":"bring O1 O2 (= bring O2 to O1)","wf":["bring O to do","bring O as C","bring O (to be) C"],"m":"O1にO2をもたらす","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"His arrival brought us great joy.","ja":"彼の到着は私たちに大きな喜びをもたらした。"},{"v":"deny","cf":"deny O1 O2 (= deny O2 to O1)","wf":["deny O to do","deny O as C","deny O C"],"m":"O1にO2を与えない","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"They denied him access to the building.","ja":"彼らは彼に建物への入場を拒否した。"},{"v":"do","cf":"do O1 O2 (= do O2 to O1)","wf":["do O to do","do O as C","do O C"],"m":"O1にO2をもたらす/与える","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"Exercise will do you a lot of good.","ja":"運動はあなたに大きな恩恵をもたらすだろう。"},{"v":"hand","cf":"hand O1 O2 (= hand O2 to O1)","wf":["hand O to do","hand O as C","hand O C"],"m":"O1にO2を手渡す","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"She handed him the envelope.","ja":"彼女は彼に封筒を手渡した。"},{"v":"lend","cf":"lend O1 O2 (= lend O2 to O1)","wf":["lend O to do","lend O as C","lend O C"],"m":"O1にO2を貸す","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"Could you lend me your dictionary?","ja":"辞書を貸していただけますか？"},{"v":"offer","cf":"offer O1 O2 (= offer O2 to O1)","wf":["offer O to do","offer O as C","offer O C"],"m":"O1にO2を申し出る","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"They offered him a higher salary.","ja":"彼らは彼により高い給料を提示した。"},{"v":"owe","cf":"owe O1 O2 (= owe O2 to O1)","wf":["owe O to do","owe O as C","owe O C"],"m":"O1にO2を借りる/負う","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"I owe you an apology.","ja":"あなたに謝罪しなければなりません。"},{"v":"pass","cf":"pass O1 O2 (= pass O2 to O1)","wf":["pass O to do","pass O as C","pass O C"],"m":"O1にO2を手渡す/回す","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"Please pass me the salt.","ja":"塩を回してください。"},{"v":"pay","cf":"pay O1 O2 (= pay O2 to O1)","wf":["pay O to do","pay O as C","pay O C"],"m":"O1にO2を払う","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"The company paid him a bonus.","ja":"会社は彼にボーナスを支払った。"},{"v":"promise","cf":"promise O1 O2 (= promise O2 to O1)","wf":["promise O to do","promise O as C","promise O C"],"m":"O1にO2を約束する","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"He promised her a diamond ring.","ja":"彼は彼女にダイヤの指輪を約束した。"},{"v":"read","cf":"read O1 O2 (= read O2 to O1)","wf":["read O to do","read O as C","read O C"],"m":"O1にO2を読んで聞かせる","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"She read the children a bedtime story.","ja":"彼女は子供たちに寝る前の話を読み聞かせた。"},{"v":"sell","cf":"sell O1 O2 (= sell O2 to O1)","wf":["sell O to do","sell O as C","sell O C"],"m":"O1にO2を売る","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"He sold me his old car.","ja":"彼は私に古い車を売ってくれた。"},{"v":"send","cf":"send O1 O2 (= send O2 to O1)","wf":["send O to do","send O as C","send O C"],"m":"O1にO2を送る","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"She sent him a long letter.","ja":"彼女は彼に長い手紙を送った。"},{"v":"show","cf":"show O1 O2 (= show O2 to O1)","wf":["show O to do","show O as C","show O (to be) C"],"m":"O1にO2を見せる/教える","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"Can you show me the way?","ja":"道を教えていただけますか？"},{"v":"take","cf":"take O1 O2 (= take O2 to O1)","wf":["take O1 O2 (= take O2 for O1)","take O to do","take O C"],"m":"O1にO2を持っていく","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"He took her some flowers.","ja":"彼は彼女に花を持っていった。"},{"v":"teach","cf":"teach O1 O2 (= teach O2 to O1)","wf":["teach O to do","teach O as C","teach O C"],"m":"O1にO2を教える","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"She taught us English grammar.","ja":"彼女は私たちに英文法を教えた。"},{"v":"tell","cf":"tell O1 O2 (= tell O2 to O1)","wf":["tell O to do","tell O as C","tell O C"],"m":"O1にO2を話す","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"Tell me the truth.","ja":"本当のことを話してください。"},{"v":"write","cf":"write O1 O2 (= write O2 to O1)","wf":["write O to do","write O as C","write O C"],"m":"O1にO2を書く","ul":"give型","ug":"S+V+O1+O2","tb":"1","en":"He wrote her a long email.","ja":"彼は彼女に長いメールを書いた。"},{"v":"buy","cf":"buy O1 O2 (= buy O2 for O1)","wf":["buy O1 O2 (= buy O2 to O1)","buy O to do","buy O C"],"m":"O1にO2を買ってやる","ul":"buy型","ug":"S+V+O1+O2","tb":"1","en":"He bought his son a new bicycle.","ja":"彼は息子に新しい自転車を買ってやった。"},{"v":"choose","cf":"choose O1 O2 (= choose O2 for O1)","wf":["choose O1 O2 (= choose O2 to O1)","choose O to do","choose O C"],"m":"O1にO2を選んでやる","ul":"buy型","ug":"S+V+O1+O2","tb":"1","en":"She chose him a nice tie.","ja":"彼女は彼に素敵なネクタイを選んであげた。"},{"v":"cook","cf":"cook O1 O2 (= cook O2 for O1)","wf":["cook O1 O2 (= cook O2 to O1)","cook O to do","cook O C"],"m":"O1にO2を料理してやる","ul":"buy型","ug":"S+V+O1+O2","tb":"1","en":"She cooked him a delicious meal.","ja":"彼女は彼においしい料理を作ってあげた。"},{"v":"find","cf":"find O1 O2 (= find O2 for O1)","wf":["find O1 O2 (= find O2 to O1)","find O to do","find O (to be) C"],"m":"O1にO2を見つけてやる","ul":"buy型","ug":"S+V+O1+O2","tb":"1","en":"Can you find me a good hotel?","ja":"良いホテルを見つけてもらえますか？"},{"v":"get","cf":"get O1 O2 (= get O2 for O1)","wf":["get O1 O2 (= get O2 to O1)","get O to do","get O C"],"m":"O1にO2を入手してやる","ul":"buy型","ug":"S+V+O1+O2","tb":"1","en":"Could you get me a glass of water?","ja":"水を一杯持ってきていただけますか？"},{"v":"leave","cf":"leave O1 O2 (= leave O2 for O1)","wf":["leave O1 O2 (= leave O2 to O1)","leave O to do","leave O C"],"m":"O1にO2を残してやる","ul":"buy型","ug":"S+V+O1+O2","tb":"1","en":"Leave me some cake, please.","ja":"ケーキを少し残しておいてください。"},{"v":"make","cf":"make O1 O2 (= make O2 for O1)","wf":["make O1 O2 (= make O2 to O1)","make O do","make O C"],"m":"O1にO2を作ってやる","ul":"buy型","ug":"S+V+O1+O2","tb":"1","en":"She made him a cup of tea.","ja":"彼女は彼にお茶を一杯作ってあげた。"},{"v":"order","cf":"order O1 O2 (= order O2 for O1)","wf":["order O1 O2 (= order O2 to O1)","order O to do","order O C"],"m":"O1にO2を注文する","ul":"buy型","ug":"S+V+O1+O2","tb":"1","en":"He ordered her a pizza.","ja":"彼は彼女のためにピザを注文した。"},{"v":"take","cf":"take O1 O2 (to も for も不可)","wf":["take O1 O2 (= take O2 to O1)","take O1 O2 (= take O2 for O1)","take O to do"],"m":"O1にO2かかる（時間・費用）","ul":"注意型","ug":"S+V+O1+O2","tb":"1","en":"It took me two hours to finish.","ja":"仕上げるのに2時間かかった。"},{"v":"cost","cf":"cost O1 O2 (to も for も不可)","wf":["cost O1 O2 (= cost O2 to O1)","cost O1 O2 (= cost O2 for O1)","cost O to do"],"m":"O1にO2かかる（費用）","ul":"注意型","ug":"S+V+O1+O2","tb":"1","en":"The repair cost him a lot of money.","ja":"修理に多額のお金がかかった。"},{"v":"save","cf":"save O1 O2 (to も for も不可)","wf":["save O1 O2 (= save O2 to O1)","save O1 O2 (= save O2 for O1)","save O to do"],"m":"O1にO2をかけさせない/省く","ul":"注意型","ug":"S+V+O1+O2","tb":"1","en":"Taking the shortcut saved us an hour.","ja":"近道のおかげで1時間省けた。"},{"v":"spare","cf":"spare O1 O2 (to も for も不可)","wf":["spare O1 O2 (= spare O2 to O1)","spare O1 O2 (= spare O2 for O1)","spare O to do"],"m":"O1にO2をかけさせない/省く","ul":"注意型","ug":"S+V+O1+O2","tb":"1","en":"Can you spare me five minutes?","ja":"5分ほどお時間をいただけますか？"},{"v":"be","cf":"be C","wf":["be C (remain型)","be C (become型)","be O C"],"m":"Cである","ul":"である型","ug":"S+V+C","tb":"2","en":"She is a brilliant scientist.","ja":"彼女は優秀な科学者だ。"},{"v":"remain","cf":"remain C","wf":["remain C (become型)","remain O C","remain O to do"],"m":"Cのままである","ul":"のまま型","ug":"S+V+C","tb":"2","en":"He remained calm during the crisis.","ja":"彼は危機の間も冷静なままでいた。"},{"v":"keep","cf":"keep C","wf":["keep C (become型)","keep O C","keep O (to be) C"],"m":"Cのままである","ul":"のまま型","ug":"S+V+C","tb":"2","en":"Keep quiet during the exam.","ja":"試験中は静かにしていなさい。"},{"v":"hold","cf":"hold C","wf":["hold C (become型)","hold O (to be) C","hold O as C"],"m":"Cのままである","ul":"のまま型","ug":"S+V+C","tb":"2","en":"The weather held fine all week.","ja":"天気は一週間ずっと晴れのままだった。"},{"v":"lie","cf":"lie C","wf":["lie C (become型)","lie O C","lie O to do"],"m":"Cのままである","ul":"のまま型","ug":"S+V+C","tb":"2","en":"The city lay silent under the snow.","ja":"街は雪の下で静まりかえっていた。"},{"v":"stay","cf":"stay C","wf":["stay C (become型)","stay O C","stay O to do"],"m":"Cの状態にある","ul":"のまま型","ug":"S+V+C","tb":"2","en":"Stay healthy and get enough sleep.","ja":"健康でいるために十分な睡眠をとりなさい。"},{"v":"become","cf":"become C","wf":["become C (remain型)","become O C","become O to do"],"m":"Cになる","ul":"になる型","ug":"S+V+C","tb":"2","en":"She became a famous novelist.","ja":"彼女は有名な小説家になった。"},{"v":"get","cf":"get C","wf":["get C (remain型)","get O C","get O to do"],"m":"Cになる","ul":"になる型","ug":"S+V+C","tb":"2","en":"It is getting dark outside.","ja":"外が暗くなってきた。"},{"v":"grow","cf":"grow C","wf":["grow C (remain型)","grow O C","grow O to do"],"m":"Cになる","ul":"になる型","ug":"S+V+C","tb":"2","en":"He grew impatient waiting for the reply.","ja":"彼は返事を待ってじれったくなってきた。"},{"v":"turn","cf":"turn C","wf":["turn C (remain型)","turn O C","turn C (feel型)"],"m":"Cになる","ul":"になる型","ug":"S+V+C","tb":"2","en":"The leaves turned red in autumn.","ja":"秋になると葉が赤くなった。"},{"v":"come","cf":"come C","wf":["come C (remain型)","come O C","come C (feel型)"],"m":"Cの状態になる","ul":"になる型","ug":"S+V+C","tb":"2","en":"His dream came true at last.","ja":"ついに彼の夢が実現した。"},{"v":"go","cf":"go C","wf":["go C (remain型)","go O C","go C (feel型)"],"m":"Cの状態になる","ul":"になる型","ug":"S+V+C","tb":"2","en":"Do not let the milk go bad.","ja":"牛乳を腐らせないようにしなさい。"},{"v":"fall","cf":"fall C","wf":["fall C (remain型)","fall O C","fall C (feel型)"],"m":"Cの状態になる","ul":"になる型","ug":"S+V+C","tb":"2","en":"He fell ill after the long journey.","ja":"長旅の後、彼は病気になった。"},{"v":"run","cf":"run C","wf":["run C (remain型)","run O C","run O to do"],"m":"Cの状態になる","ul":"になる型","ug":"S+V+C","tb":"2","en":"The river ran dry during the drought.","ja":"干ばつで川が干上がった。"},{"v":"prove","cf":"prove C","wf":["prove O (to be) C","prove C (remain型)","prove O as C"],"m":"結果としてCとなる","ul":"になる型","ug":"S+V+C","tb":"2","en":"The plan proved successful.","ja":"その計画は結果的に成功した。"},{"v":"feel","cf":"feel C","wf":["feel C (remain型)","feel O (to be) C","feel O do"],"m":"Cの感じがする","ul":"感ずる型","ug":"S+V+C","tb":"2","en":"The water feels cold.","ja":"水が冷たく感じる。"},{"v":"taste","cf":"taste C","wf":["taste C (remain型)","taste C (become型)","taste O C"],"m":"Cの味がする","ul":"感ずる型","ug":"S+V+C","tb":"2","en":"This soup tastes salty.","ja":"このスープは塩辛い味がする。"},{"v":"smell","cf":"smell C","wf":["smell C (remain型)","smell C (become型)","smell O do"],"m":"Cの匂いがする","ul":"感ずる型","ug":"S+V+C","tb":"2","en":"The roses smell wonderful.","ja":"バラがすばらしい香りを放っている。"},{"v":"sound","cf":"sound C","wf":["sound C (remain型)","sound C (become型)","sound O C"],"m":"Cに聞こえる","ul":"感ずる型","ug":"S+V+C","tb":"2","en":"That idea sounds interesting.","ja":"そのアイデアはおもしろそうだ。"},{"v":"look","cf":"look C","wf":["look C (remain型)","look C (become型)","look on O as C"],"m":"Cに見える","ul":"感ずる型","ug":"S+V+C","tb":"2","en":"You look tired today.","ja":"あなたは今日疲れているように見える。"},{"v":"appear","cf":"appear C","wf":["appear C (remain型)","appear C (become型)","appear O C"],"m":"（見て）Cのように思われる/Cに見える","ul":"感ずる型","ug":"S+V+C","tb":"2","en":"He appeared nervous before the speech.","ja":"スピーチ前、彼は緊張しているように見えた。"},{"v":"seem","cf":"seem C","wf":["seem C (remain型)","seem C (become型)","seem O C"],"m":"（見て）Cのように思われる/Cに見える","ul":"感ずる型","ug":"S+V+C","tb":"2","en":"She seems happy with the result.","ja":"彼女は結果に満足しているようだ。"},{"v":"make","cf":"make O C","wf":["make O (to be) C","make O as C","make O do"],"m":"OをCにする","ul":"make OC型","ug":"S+V+O+C","tb":"3","en":"Hard work made him successful.","ja":"努力が彼を成功させた。"},{"v":"get","cf":"get O C","wf":["get O to do","get O as C","get O (to be) C"],"m":"OをCにする","ul":"make OC型","ug":"S+V+O+C","tb":"3","en":"Get your room clean before dinner.","ja":"夕食前に部屋をきれいにしなさい。"},{"v":"set","cf":"set O C","wf":["set O to do","set O as C","set O (to be) C"],"m":"OをCにする","ul":"make OC型","ug":"S+V+O+C","tb":"3","en":"The news set her heart racing.","ja":"その知らせに彼女の心臓はどきどきした。"},{"v":"turn","cf":"turn O C","wf":["turn O to do","turn O as C","turn O (to be) C"],"m":"OをCにする","ul":"make OC型","ug":"S+V+O+C","tb":"3","en":"Autumn turns the leaves red.","ja":"秋は葉を赤くする。"},{"v":"keep","cf":"keep O C","wf":["keep O to do","keep O as C","keep O (to be) C"],"m":"OをCにしておく","ul":"make OC型","ug":"S+V+O+C","tb":"3","en":"Keep the door open, please.","ja":"ドアを開けたままにしておいてください。"},{"v":"leave","cf":"leave O C","wf":["leave O to do","leave O as C","leave O (to be) C"],"m":"OをCにしておく","ul":"make OC型","ug":"S+V+O+C","tb":"3","en":"Do not leave the window open.","ja":"窓を開けっ放しにしないでください。"},{"v":"call","cf":"call O C","wf":["call O to do","call O as C","call O (to be) C"],"m":"OをCと呼ぶ","ul":"make OC型","ug":"S+V+O+C","tb":"3","en":"They called the baby Emma.","ja":"彼らはその赤ちゃんをエマと名付けた。"},{"v":"name","cf":"name O C","wf":["name O to do","name O as C","name O (to be) C"],"m":"OをCと名付ける","ul":"make OC型","ug":"S+V+O+C","tb":"3","en":"They named their son after his grandfather.","ja":"彼らは息子を祖父にちなんで命名した。"},{"v":"choose","cf":"choose O C","wf":["choose O to do","choose O as C","choose O (to be) C"],"m":"OをCに選ぶ","ul":"make OC型","ug":"S+V+O+C","tb":"3","en":"The team chose him captain.","ja":"チームは彼をキャプテンに選んだ。"},{"v":"think","cf":"think O (to be) C","wf":["think O C","think of O as C","think O to do"],"m":"OがCであると思う","ul":"think O (to be) C型","ug":"S+V+O+C","tb":"3","en":"I think him (to be) honest.","ja":"私は彼が誠実だと思う。"},{"v":"believe","cf":"believe O (to be) C","wf":["believe O C","believe O as C","believe O to do"],"m":"OがCであると信じる","ul":"think O (to be) C型","ug":"S+V+O+C","tb":"3","en":"They believed him (to be) innocent.","ja":"彼らは彼が無実だと信じた。"},{"v":"presume","cf":"presume O (to be) C","wf":["presume O C","presume O as C","presume O to do"],"m":"OがCであると想定する","ul":"think O (to be) C型","ug":"S+V+O+C","tb":"3","en":"I presume him (to be) guilty.","ja":"私は彼が有罪だと思っている。"},{"v":"suppose","cf":"suppose O (to be) C","wf":["suppose O C","suppose O as C","suppose O to do"],"m":"OがCであると思う","ul":"think O (to be) C型","ug":"S+V+O+C","tb":"3","en":"I supposed him (to be) a doctor.","ja":"私は彼が医者だと思っていた。"},{"v":"consider","cf":"consider O (to be) C","wf":["consider O C","consider O as C","consider O to do"],"m":"OがCであると考える","ul":"think O (to be) C型","ug":"S+V+O+C","tb":"3","en":"We consider the plan (to be) risky.","ja":"私たちはその計画を危険だと考えている。"},{"v":"hold","cf":"hold O (to be) C","wf":["hold O C","hold O as C","hold O to do"],"m":"OがCであると思う","ul":"think O (to be) C型","ug":"S+V+O+C","tb":"3","en":"The court held him (to be) liable.","ja":"裁判所は彼に責任があると判断した。"},{"v":"imagine","cf":"imagine O (to be) C","wf":["imagine O C","imagine O as C","imagine O to do"],"m":"OがCであると思う","ul":"think O (to be) C型","ug":"S+V+O+C","tb":"3","en":"She imagined him (to be) very rich.","ja":"彼女は彼がとても金持ちだと思い込んでいた。"},{"v":"feel","cf":"feel O (to be) C","wf":["feel O C","feel O as C","feel O do"],"m":"OがCであると感じる","ul":"think O (to be) C型","ug":"S+V+O+C","tb":"3","en":"I felt the idea (to be) worthwhile.","ja":"私はそのアイデアが価値あるものだと感じた。"},{"v":"find","cf":"find O (to be) C","wf":["find O C","find O as C","find O to do"],"m":"OがCであるとわかる","ul":"think O (to be) C型","ug":"S+V+O+C","tb":"3","en":"She found the book (to be) boring.","ja":"彼女はその本が退屈だとわかった。"},{"v":"show","cf":"show O (to be) C","wf":["show O C","show O as C","show O1 O2"],"m":"OがCであると示す","ul":"think O (to be) C型","ug":"S+V+O+C","tb":"3","en":"The data showed the theory (to be) correct.","ja":"データはその理論が正しいことを示した。"},{"v":"prove","cf":"prove O (to be) C","wf":["prove O C","prove O as C","prove C"],"m":"OがCであると証明する","ul":"think O (to be) C型","ug":"S+V+O+C","tb":"3","en":"He proved the defendant (to be) innocent.","ja":"彼は被告が無実であることを証明した。"},{"v":"regard","cf":"regard O as C","wf":["regard O (to be) C","regard O C","regard O to do"],"m":"OをCとみなす","ul":"regard O as C型","ug":"S+V+O+C","tb":"3","en":"We regard honesty as essential.","ja":"私たちは誠実さを不可欠なものとみなしている。"},{"v":"think of","cf":"think of O as C","wf":["think of O (to be) C","think of O C","think of O to do"],"m":"OをCとみなす","ul":"regard O as C型","ug":"S+V+O+C","tb":"3","en":"I think of him as a close friend.","ja":"私は彼を親友とみなしている。"},{"v":"look on","cf":"look on O as C","wf":["look on O (to be) C","look on O C","look on O to do"],"m":"OをCとみなす","ul":"regard O as C型","ug":"S+V+O+C","tb":"3","en":"They look on him as a leader.","ja":"彼らは彼をリーダーとみなしている。"},{"v":"see","cf":"see O as C","wf":["see O (to be) C","see O do","see O doing"],"m":"OをCとみなす","ul":"regard O as C型","ug":"S+V+O+C","tb":"3","en":"She sees herself as a pioneer.","ja":"彼女は自分を先駆者だとみなしている。"},{"v":"allow","cf":"allow O to do","wf":["allow O do","allow O doing","allow O as C"],"m":"Oが...するのを認める","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"They allowed him to leave early.","ja":"彼らは彼が早退することを許可した。"},{"v":"permit","cf":"permit O to do","wf":["permit O do","permit O doing","permit O as C"],"m":"Oが...するのを許す","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"They did not permit him to enter.","ja":"彼らは彼が入ることを許可しなかった。"},{"v":"admit","cf":"admit O to do","wf":["admit O do","admit O doing","admit O as C"],"m":"Oが...するのを認める","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"The rule admits him to vote.","ja":"その規則は彼が投票することを認めている。"},{"v":"help","cf":"help O (to) do","wf":["help O to doing","help O as C","help O (to be) C"],"m":"Oが...するのを手伝う","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"He helped me (to) carry the luggage.","ja":"彼は私が荷物を運ぶのを手伝ってくれた。"},{"v":"force","cf":"force O to do","wf":["force O do","force O as C","force O (to be) C"],"m":"Oに...させる[強制]","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"They forced him to sign the document.","ja":"彼らは彼に書類に署名させた。"},{"v":"compel","cf":"compel O to do","wf":["compel O do","compel O as C","compel O (to be) C"],"m":"Oに...させる[強制]","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"The situation compelled him to resign.","ja":"状況が彼を辞任せざるを得なくさせた。"},{"v":"oblige","cf":"oblige O to do","wf":["oblige O do","oblige O as C","oblige O (to be) C"],"m":"Oに...させる[強制]","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"The law obliges drivers to wear seatbelts.","ja":"法律はシートベルトの着用を義務づけている。"},{"v":"cause","cf":"cause O to do","wf":["cause O do","cause O as C","cause O (to be) C"],"m":"Oに...させる[原因]","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"The noise caused him to wake up.","ja":"その騒音のせいで彼は目が覚めた。"},{"v":"enable","cf":"enable O to do","wf":["enable O do","enable O as C","enable O (to be) C"],"m":"Oに...できるようにする","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"The scholarship enabled her to study abroad.","ja":"奨学金のおかげで彼女は留学できた。"},{"v":"teach","cf":"teach O to do","wf":["teach O do","teach O1 O2","teach O (to be) C"],"m":"Oに...するように教える","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"She taught him to play the piano.","ja":"彼女は彼にピアノの弾き方を教えた。"},{"v":"tell","cf":"tell O to do","wf":["tell O do","tell O1 O2","tell O (to be) C"],"m":"Oに...せよと言う","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"She told him to wait outside.","ja":"彼女は彼に外で待つよう言った。"},{"v":"order","cf":"order O to do","wf":["order O do","order O1 O2","order O as C"],"m":"Oに...するように命ずる","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"The general ordered the troops to advance.","ja":"将軍は部隊に前進を命じた。"},{"v":"advise","cf":"advise O to do","wf":["advise O do","advise O as C","advise O (to be) C"],"m":"Oに...するよう忠告する","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"The doctor advised him to rest.","ja":"医師は彼に休むよう忠告した。"},{"v":"persuade","cf":"persuade O to do","wf":["persuade O do","persuade O as C","persuade O (to be) C"],"m":"Oに...するよう説得する","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"She persuaded him to change his mind.","ja":"彼女は彼に考えを変えるよう説得した。"},{"v":"lead","cf":"lead O to do","wf":["lead O do","lead O as C","lead O (to be) C"],"m":"Oに...する気にさせる","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"Curiosity led him to explore the cave.","ja":"好奇心が彼を洞窟の探索へと向かわせた。"},{"v":"drive","cf":"drive O to do","wf":["drive O do","drive O as C","drive O (to be) C"],"m":"Oに...するようりたてる","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"Desperation drove him to steal.","ja":"絶望が彼を盗みへと駆り立てた。"},{"v":"encourage","cf":"encourage O to do","wf":["encourage O do","encourage O as C","encourage O (to be) C"],"m":"Oに...するようはげます","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"He encouraged her to keep trying.","ja":"彼は彼女に挑戦し続けるよう励ました。"},{"v":"ask","cf":"ask O to do","wf":["ask O do","ask O as C","ask O (to be) C"],"m":"Oに...するように頼む","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"I asked him to help me.","ja":"私は彼に手伝ってくれるよう頼んだ。"},{"v":"expect","cf":"expect O to do","wf":["expect O do","expect O as C","expect O (to be) C"],"m":"Oに...して欲しいと期待する","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"I expect you to be on time.","ja":"あなたには時間通りに来てほしい。"},{"v":"request","cf":"request O to do","wf":["request O do","request O as C","request O (to be) C"],"m":"Oに...するよう要求する","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"The teacher requested them to be quiet.","ja":"先生は静かにするよう求めた。"},{"v":"want","cf":"want O to do","wf":["want O do","want O as C","want O (to be) C"],"m":"Oに...してもらいたい","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"I want you to tell the truth.","ja":"あなたに本当のことを言ってほしい。"},{"v":"wish","cf":"wish O to do","wf":["wish O do","wish O as C","wish O (to be) C"],"m":"Oに...してもらいたい","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"I wish you to be happy.","ja":"あなたに幸せでいてほしい。"},{"v":"like","cf":"like O to do","wf":["like O do","like O as C","like O (to be) C"],"m":"Oに...してもらいたい","ul":"allow O to do型","ug":"S+V+O+C","tb":"3","en":"I like you to knock before entering.","ja":"入る前にノックしてもらいたい。"},{"v":"see","cf":"see O do/doing/done","wf":["see O to do","see O as C","see O (to be) C"],"m":"Oが...するのを見る","ul":"知覚動詞型","ug":"S+V+O+C","tb":"3","en":"I saw him cross the street.","ja":"私は彼が通りを渡るのを見た。"},{"v":"watch","cf":"watch O do/doing/done","wf":["watch O to do","watch O as C","watch O (to be) C"],"m":"Oが...するのを見る","ul":"知覚動詞型","ug":"S+V+O+C","tb":"3","en":"We watched the children play in the park.","ja":"私たちは子供たちが公園で遊ぶのを見ていた。"},{"v":"look at","cf":"look at O do/doing/done","wf":["look at O to do","look at O as C","look at O (to be) C"],"m":"Oが...するのを見る","ul":"知覚動詞型","ug":"S+V+O+C","tb":"3","en":"She looked at the cat sleeping on the sofa.","ja":"彼女はソファで眠る猫を見ていた。"},{"v":"hear","cf":"hear O do/doing/done","wf":["hear O to do","hear O as C","hear O (to be) C"],"m":"Oが...するのを聞く","ul":"知覚動詞型","ug":"S+V+O+C","tb":"3","en":"I heard him sing a beautiful song.","ja":"私は彼が美しい歌を歌うのを聞いた。"},{"v":"listen to","cf":"listen to O do/doing","wf":["listen to O to do","listen to O as C","listen to O (to be) C"],"m":"Oが...するのを聞く","ul":"知覚動詞型","ug":"S+V+O+C","tb":"3","en":"She listened to the birds singing outside.","ja":"彼女は外で鳴く鳥の声に耳を傾けた。"},{"v":"feel","cf":"feel O do/doing","wf":["feel O to do","feel O (to be) C","feel O as C"],"m":"Oが...するのを感じる","ul":"知覚動詞型","ug":"S+V+O+C","tb":"3","en":"I felt something touch my shoulder.","ja":"何かが肩に触れるのを感じた。"},{"v":"perceive","cf":"perceive O do/doing","wf":["perceive O to do","perceive O as C","perceive O (to be) C"],"m":"Oが...するのを知る","ul":"知覚動詞型","ug":"S+V+O+C","tb":"3","en":"She perceived the situation changing rapidly.","ja":"彼女は状況が急速に変わりつつあるのを感じ取った。"},{"v":"notice","cf":"notice O do/doing","wf":["notice O to do","notice O as C","notice O (to be) C"],"m":"Oが...するのに気づく","ul":"知覚動詞型","ug":"S+V+O+C","tb":"3","en":"He noticed someone following him.","ja":"彼は誰かが自分の後をつけていることに気づいた。"},{"v":"make","cf":"make O do","wf":["make O to do","make O C","make O as C"],"m":"Oに...させる[強制]","ul":"使役動詞型","ug":"S+V+O+C","tb":"3","en":"The cold weather made him stay indoors.","ja":"寒い天気のせいで彼は室内にこもった。"},{"v":"let","cf":"let O do","wf":["let O to do","let O C","let O as C"],"m":"Oに...させる/するのを認める[許可]","ul":"使役動詞型","ug":"S+V+O+C","tb":"3","en":"She let her children stay up late.","ja":"彼女は子供たちが夜更かしするのを許した。"},{"v":"have","cf":"have O do","wf":["have O to do","have O C","have O as C"],"m":"Oに...させる/してもらう[依頼](= get O to do)","ul":"使役動詞型","ug":"S+V+O+C","tb":"3","en":"I had him fix my bicycle.","ja":"私は彼に自転車を修理してもらった。"}];
-var selTb={"1":true,"2":true,"3":true};
+
 var tbName={"1":"動詞表1","2":"動詞表2","3":"動詞表3"};
-var qList=[],qIdx=0,cor=0,wrg=0,done=false;
+var selTb={"1":true,"2":true,"3":true};
 
-function g(id){return document.getElementById(id);}
-function t(id,s){g(id).textContent=s;}
-function d(id,v){g(id).style.display=v;}
+// --- Wrong answer store (sessionStorage-based) ---
+var wrongKeys=[];
+try{var wk=sessionStorage.getItem('vpq_wrong');if(wk)wrongKeys=JSON.parse(wk);}catch(e){}
+function saveWrong(){try{sessionStorage.setItem('vpq_wrong',JSON.stringify(wrongKeys));}catch(e){}}
+function addWrong(v,cf){
+  var key=v+'|||'+cf;
+  if(wrongKeys.indexOf(key)<0){wrongKeys.push(key);saveWrong();}
+  updateBadge();
+}
+function removeWrong(v,cf){
+  var key=v+'|||'+cf;
+  wrongKeys=wrongKeys.filter(function(k){return k!==key;});
+  saveWrong();updateBadge();
+}
+function getWrongItems(){
+  return wrongKeys.map(function(k){
+    var parts=k.split('|||');
+    return DATA.find(function(d){return d.v===parts[0]&&d.cf===parts[1];})||null;
+  }).filter(Boolean);
+}
+function clearAllWrong(){wrongKeys=[];saveWrong();updateBadge();}
+function updateBadge(){
+  var b=document.getElementById('rv-badge');
+  if(b)b.textContent=wrongKeys.length>0?'('+wrongKeys.length+')':'';
+}
 
+// --- Page navigation ---
+var curPage='quiz';
+function showPage(p){
+  curPage=p;
+  document.querySelectorAll('.page').forEach(function(el){el.classList.remove('show');});
+  document.querySelectorAll('.ntb').forEach(function(el){el.classList.remove('act');});
+  var pages={quiz:'quiz',list:'listpage',review:'reviewpage'};
+  document.getElementById(pages[p]).classList.add('show');
+  var idx={quiz:0,list:1,review:2}[p];
+  document.querySelectorAll('.ntb')[idx].classList.add('act');
+  document.getElementById('pb').style.display=p==='quiz'?'block':'none';
+  if(p==='list')renderList();
+  if(p==='review')renderReviewList();
+}
+
+// --- Category buttons ---
 (function buildCats(){
-  var wrap=g('cw');
+  var wrap=document.getElementById('cw');
   ['1','2','3'].forEach(function(tb){
     var btn=document.createElement('button');
-    btn.className='cb on';
-    btn.textContent=tbName[tb];
+    btn.className='cb on';btn.textContent=tbName[tb];
     btn.onclick=function(){
-      if(selTb[tb]){
-        var n=0;for(var k in selTb){if(selTb[k])n++;}
-        if(n<=1)return;
-        selTb[tb]=false;btn.className='cb';
-      }else{selTb[tb]=true;btn.className='cb on';}
+      if(selTb[tb]){var n=0;for(var k in selTb){if(selTb[k])n++;}if(n<=1)return;selTb[tb]=false;btn.className='cb';}
+      else{selTb[tb]=true;btn.className='cb on';}
     };
     wrap.appendChild(btn);
   });
 })();
+
+// --- Build ul filter for list ---
+(function buildUlFilter(){
+  var uls={},sel=document.getElementById('lf-ul');
+  DATA.forEach(function(d){uls[d.ul]=1;});
+  Object.keys(uls).sort().forEach(function(ul){
+    var o=document.createElement('option');o.value=ul;o.textContent=ul;sel.appendChild(o);
+  });
+})();
+
+// ===== QUIZ LOGIC =====
+var qList=[],qIdx=0,cor=0,wrg=0,answerDone=false;
+var sessionWrong=[]; // wrong items in current quiz session
+
+function g(id){return document.getElementById(id);}
+function t(id,s){g(id).textContent=s;}
 
 function shuffle(a){
   var b=a.slice(),i,j,x;
@@ -165,21 +356,30 @@ function shuffle(a){
   return b;
 }
 
-function startQuiz(){
-  var pool=DATA.filter(function(d){return selTb[d.tb];});
-  if(pool.length<4){alert('カテゴリーを選んでください');return;}
-  var sel=g('qc').value;
-  var sh=shuffle(pool);
-  var n=sel==='all'?sh.length:Math.min(parseInt(sel),sh.length);
-  qList=sh.slice(0,n);
-  qIdx=0;cor=0;wrg=0;done=false;
-  d('setup','none');d('rs','none');d('quiz','block');
+function startQuiz(pool){
+  sessionWrong=[];
+  if(!pool){
+    pool=DATA.filter(function(d){return selTb[d.tb];});
+    if(pool.length<4){alert('カテゴリーを選んでください');return;}
+    var sel=g('qcnt').value;
+    var sh=shuffle(pool);
+    var n=sel==='all'?sh.length:Math.min(parseInt(sel),sh.length);
+    qList=sh.slice(0,n);
+  }else{
+    qList=shuffle(pool);
+  }
+  qIdx=0;cor=0;wrg=0;answerDone=false;
+  g('setup').style.display='none';
+  g('rs').style.display='none';
+  g('rvq-area').style.display='none';
+  g('rv-list-area').style.display='';
+  g('qarea').style.display='block';
   renderQ();
 }
 
 function renderQ(){
   if(qIdx>=qList.length){showResult();return;}
-  done=false;
+  answerDone=false;
   var q=qList[qIdx];
   var pct=Math.round(qIdx/qList.length*100);
   g('pbi').style.width=pct+'%';
@@ -187,7 +387,7 @@ function renderQ(){
   t('s3',qIdx===0?'-':Math.round(cor/qIdx*100)+'%');
   t('qv',q.v);t('qn',(qIdx+1)+' / '+qList.length);
   t('bt',tbName[q.tb]);t('bu',q.ug);
-  d('fb','none');d('nb','none');
+  g('fb').style.display='none';g('nb').style.display='none';
   var opts=shuffle([q.cf,q.wf[0],q.wf[1],q.wf[2]]);
   var grid=g('og');grid.innerHTML='';
   opts.forEach(function(opt){
@@ -199,9 +399,9 @@ function renderQ(){
 }
 
 function doAns(btn,chosen,q){
-  if(done)return;done=true;
+  if(answerDone)return;answerDone=true;
   var ok=chosen===q.cf;
-  if(ok)cor++;else wrg++;
+  if(ok)cor++;else{wrg++;addWrong(q.v,q.cf);sessionWrong.push(q);}
   var all=g('og').getElementsByTagName('button');
   for(var i=0;i<all.length;i++){
     all[i].disabled=true;
@@ -211,7 +411,7 @@ function doAns(btn,chosen,q){
   t('s1',cor);t('s2',wrg);t('s3',Math.round(cor/(qIdx+1)*100)+'%');
   var fb=g('fb');
   fb.className=ok?'ok':'ng';
-  t('fbh',ok?'正解！':'不正解');
+  t('fbh',ok?'✓ 正解！':'✗ 不正解');
   t('fbf',q.cf);
   var rows=g('fbr');rows.innerHTML='';
   [['意味',q.m],['用法',q.ul],['文型',q.ug+' (動詞表'+q.tb+')']].forEach(function(r){
@@ -221,25 +421,213 @@ function doAns(btn,chosen,q){
     rows.appendChild(div);
   });
   t('fee',q.en);t('fej',q.ja);
-  d('fb','block');d('nb','block');
+  g('fb').style.display='block';g('nb').style.display='block';
 }
 
 function nextQ(){qIdx++;renderQ();}
 
 function showResult(){
-  d('quiz','none');g('pbi').style.width='100%';
+  g('qarea').style.display='none';
+  g('pbi').style.width='100%';
   var tot=qList.length,pct=Math.round(cor/tot*100);
   t('rp',pct+'%');t('rl',tot+'問中 '+cor+'問正解');
-  t('rc',cor);t('rw',wrg);t('rt',tot);
+  t('rc',cor);t('rw2',wrg);t('rt',tot);
   var msgs=['基礎から整理しましょう。カテゴリーを絞って繰り返すのが効果的です。',
     '半分以上正解！用法パターンの細部を意識して復習しましょう。',
     'よくできました！to/forの区別やto beの有無などを確認しましょう。',
     'ほぼ完璧！自信を持ってください。'];
   t('rm',msgs[pct>=90?3:pct>=75?2:pct>=55?1:0]);
-  d('rs','block');
+  var r3=g('r3');
+  r3.disabled=sessionWrong.length===0;
+  r3.textContent='❌ 間違い '+sessionWrong.length+'問を復習する';
+  g('rs').style.display='block';
 }
 
-function goSetup(){d('rs','none');d('setup','block');}
+function goSetup(){g('rs').style.display='none';g('setup').style.display='block';}
+
+function goReviewFromResult(){
+  if(sessionWrong.length===0)return;
+  showPage('review');
+  startReviewQuiz(sessionWrong);
+}
+
+// ===== LIST =====
+function renderList(){
+  var tbF=document.getElementById('lf-tb').value;
+  var ulF=document.getElementById('lf-ul').value;
+  var qF=(document.getElementById('lf-q').value||'').toLowerCase().trim();
+  var rows=DATA.filter(function(d){
+    if(tbF&&d.tb!==tbF)return false;
+    if(ulF&&d.ul!==ulF)return false;
+    if(qF&&d.v.toLowerCase().indexOf(qF)<0)return false;
+    return true;
+  });
+  document.getElementById('lcount').textContent=rows.length+'件';
+  var tb=document.getElementById('ltbody');tb.innerHTML='';
+  rows.forEach(function(d){
+    var tr=document.createElement('tr');
+    var tbCls='tb'+d.tb;
+    tr.innerHTML='<td><span class="lv">'+d.v+'</span></td>'
+      +'<td><span class="lcf">'+d.cf+'</span></td>'
+      +'<td><span class="lm">'+d.m+'</span><br><span class="lcf" style="font-size:11px;color:#7ab8e8">'+d.en+'</span><br><span class="lm" style="font-size:10px">'+d.ja+'</span></td>'
+      +'<td><span class="lul '+tbCls+'">'+d.ul+'</span></td>'
+      +'<td><span class="lul '+tbCls+'">'+tbName[d.tb]+'</span></td>';
+    tb.appendChild(tr);
+  });
+}
+
+// ===== REVIEW LIST =====
+function renderReviewList(){
+  g('rvq-area').style.display='none';
+  g('rv-list-area').style.display='';
+  var items=getWrongItems();
+  var area=g('rv-list-area');
+  if(items.length===0){
+    area.innerHTML='<div class="rvempty"><span>✅</span>間違えた問題はありません！<br><span style="font-size:12px;color:#555;margin-top:8px;display:block">クイズで間違えると自動的にここに追加されます</span></div>';
+    return;
+  }
+  var html='<div class="rvsummary"><span>間違えた問題 <em>'+items.length+'件</em></span>'
+    +'<div class="rvbtns"><button id="rv-start" class="rvbtn" onclick="startReviewQuiz(getWrongItems())">🔄 まとめてクイズ</button>'
+    +'<button id="rv-clear" onclick="if(confirm(\'全て削除しますか？\')){clearAllWrong();renderReviewList();}">🗑 全削除</button></div></div>';
+  items.forEach(function(d){
+    var key=d.v+'|||'+d.cf;
+    html+='<div class="rvcard" id="rvc-'+encodeURIComponent(key)+'">'
+      +'<button class="rvc-del" onclick="removeWrong(\''+d.v.replace(/'/g,"\\'")+"','"+(d.cf.replace(/'/g,"\\'")+'\');renderReviewList();">×</button>')
+      +'<div class="rvc-v">'+d.v+'</div>'
+      +'<div class="rvc-cf">'+d.cf+'</div>'
+      +'<div class="rvc-m">'+d.m+' ／ '+d.ul+' ／ '+tbName[d.tb]+'</div>'
+      +'<div class="rvc-ex">'+d.en+'</div>'
+      +'<div class="rvc-exj">'+d.ja+'</div>'
+      +'</div>';
+  });
+  area.innerHTML=html;
+}
+
+// ===== REVIEW QUIZ =====
+var rvList=[],rvIdx=0,rvCor=0,rvWrg=0,rvDone=false;
+
+function startReviewQuiz(items){
+  if(!items||items.length===0)return;
+  // Need at least 4 items total for options; pad with random others if needed
+  var pool=items.slice();
+  if(pool.length<4){
+    var extra=shuffle(DATA.filter(function(d){return items.indexOf(d)<0;}));
+    pool=pool.concat(extra.slice(0,4-pool.length));
+  }
+  rvList=shuffle(items); // only quiz on wrong items, use pool for distractors
+  rvIdx=0;rvCor=0;rvWrg=0;rvDone=false;
+  g('rv-list-area').style.display='none';
+  var area=g('rvq-area');
+  area.style.display='block';
+  area.innerHTML=buildRvHtml();
+  renderRvQ();
+}
+
+function buildRvHtml(){
+  return '<div id="rvst" style="display:flex;gap:14px;justify-content:center;padding:10px;background:#16181f;border:1px solid #2a2c38;border-radius:10px;margin-bottom:14px">'
+    +'<div class="si"><span class="sv yn" id="rvs0">0</span><span class="sl2">問目</span></div>'
+    +'<div class="si"><span class="sv gc" id="rvs1">0</span><span class="sl2">正解</span></div>'
+    +'<div class="si"><span class="sv rw" id="rvs2">0</span><span class="sl2">不正解</span></div>'
+    +'<div class="si"><span class="sv yn" id="rvs3">-</span><span class="sl2">正答率</span></div>'
+    +'</div>'
+    +'<div id="rvqc" style="background:#1e2029;border:1px solid #2a2c38;border-radius:16px;padding:22px 26px 18px;margin-bottom:12px;position:relative;overflow:hidden">'
+    +'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#e87a7a,#e8c97a)"></div>'
+    +'<div class="ct"><div id="rvqv" style="font-size:44px;color:#e8c97a;font-weight:700">-</div><div id="rvqn" style="font-size:11px;color:#666;padding-bottom:6px">1/1</div></div>'
+    +'<div class="bg"><span class="bx b1" id="rvbt">-</span><span class="bx b2" id="rvbu">-</span></div>'
+    +'<div class="pt">正しい用法構文を選んでください</div>'
+    +'</div>'
+    +'<div id="rvog" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"></div>'
+    +'<div id="rvfb" style="display:none;border-radius:10px;padding:14px 16px;margin-bottom:12px;line-height:1.6">'
+    +'<div id="rvfbh" style="font-size:14px;font-weight:700;margin-bottom:7px"></div>'
+    +'<span id="rvfbf" style="font-family:\'Courier New\',monospace;font-size:14px;color:#e8c97a;padding:6px 10px;background:rgba(232,201,122,.07);border-radius:5px;margin-bottom:8px;display:block"></span>'
+    +'<div id="rvfbr"></div>'
+    +'<div style="margin-top:8px;padding:8px 12px;background:rgba(122,184,232,.08);border-left:3px solid #7ab8e8;border-radius:0 6px 6px 0">'
+    +'<div style="font-size:10px;color:#7ab8e8;text-transform:uppercase;letter-spacing:.07em;font-weight:700;margin-bottom:4px">例文</div>'
+    +'<div id="rvfee" style="font-family:\'Courier New\',monospace;font-size:12px;color:#c8e4f5"></div>'
+    +'<div id="rvfej" style="font-size:12px;color:#90a8b8;margin-top:3px"></div>'
+    +'</div></div>'
+    +'<button id="rvnb" style="display:none;width:100%;padding:13px;background:#e87a7a;color:#0e0f14;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:16px;font-family:Arial,sans-serif" onclick="rvNext()">次の問題</button>'
+    +'<div id="rvrs" style="display:none;text-align:center;padding:32px 0">'
+    +'<div style="font-size:40px">📝</div>'
+    +'<div id="rvrp" style="font-size:64px;font-weight:700;color:#e8c97a;line-height:1;margin:12px 0 5px">-</div>'
+    +'<div id="rvrl" style="font-size:15px;margin-bottom:16px"></div>'
+    +'<button class="rb" style="background:#e87a7a;color:#0e0f14;border:none;padding:11px 28px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;margin:0 4px;font-family:Arial,sans-serif" onclick="startReviewQuiz(getWrongItems())">もう一度</button>'
+    +'<button class="rb" style="background:none;color:#e87a7a;border:1px solid #e87a7a;padding:11px 28px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;margin:0 4px;font-family:Arial,sans-serif" onclick="g(\'rvq-area\').style.display=\'none\';g(\'rv-list-area\').style.display=\'\';renderReviewList();">リストに戻る</button>'
+    +'</div>';
+}
+
+function renderRvQ(){
+  if(rvIdx>=rvList.length){showRvResult();return;}
+  rvDone=false;
+  var q=rvList[rvIdx];
+  document.getElementById('rvs0').textContent=rvIdx+1;
+  document.getElementById('rvs1').textContent=rvCor;
+  document.getElementById('rvs2').textContent=rvWrg;
+  document.getElementById('rvs3').textContent=rvIdx===0?'-':Math.round(rvCor/rvIdx*100)+'%';
+  document.getElementById('rvqv').textContent=q.v;
+  document.getElementById('rvqn').textContent=(rvIdx+1)+' / '+rvList.length;
+  document.getElementById('rvbt').textContent=tbName[q.tb];
+  document.getElementById('rvbu').textContent=q.ug;
+  document.getElementById('rvfb').style.display='none';
+  document.getElementById('rvnb').style.display='none';
+  // distractors: use other items from DATA
+  var distractors=shuffle(DATA.filter(function(d){return d.cf!==q.cf;})).slice(0,3).map(function(d){return d.cf;});
+  var opts=shuffle([q.cf].concat(distractors));
+  var grid=document.getElementById('rvog');grid.innerHTML='';
+  opts.forEach(function(opt){
+    var btn=document.createElement('button');
+    btn.className='ob';btn.textContent=opt;
+    btn.onclick=function(){doRvAns(btn,opt,q);};
+    grid.appendChild(btn);
+  });
+}
+
+function doRvAns(btn,chosen,q){
+  if(rvDone)return;rvDone=true;
+  var ok=chosen===q.cf;
+  if(ok){rvCor++;removeWrong(q.v,q.cf);}else rvWrg++;
+  var all=document.getElementById('rvog').getElementsByTagName('button');
+  for(var i=0;i<all.length;i++){
+    all[i].disabled=true;
+    if(all[i].textContent===q.cf)all[i].className='ob bok';
+  }
+  if(!ok)btn.className='ob bng';
+  document.getElementById('rvs1').textContent=rvCor;
+  document.getElementById('rvs2').textContent=rvWrg;
+  document.getElementById('rvs3').textContent=Math.round(rvCor/(rvIdx+1)*100)+'%';
+  var fb=document.getElementById('rvfb');
+  fb.className=ok?'ok':'ng';
+  document.getElementById('rvfbh').textContent=ok?'✓ 正解！（復習完了）':'✗ 不正解';
+  document.getElementById('rvfbf').textContent=q.cf;
+  var rows=document.getElementById('rvfbr');rows.innerHTML='';
+  [['意味',q.m],['用法',q.ul],['文型',q.ug+' (動詞表'+q.tb+')']].forEach(function(r){
+    var div=document.createElement('div');div.className='fr';
+    var b=document.createElement('b');b.textContent=r[0];
+    div.appendChild(b);div.appendChild(document.createTextNode(r[1]));
+    rows.appendChild(div);
+  });
+  document.getElementById('rvfee').textContent=q.en;
+  document.getElementById('rvfej').textContent=q.ja;
+  fb.style.display='block';
+  document.getElementById('rvnb').style.display='block';
+}
+
+function rvNext(){rvIdx++;renderRvQ();}
+
+function showRvResult(){
+  document.getElementById('rvog').style.display='none';
+  document.getElementById('rvfb').style.display='none';
+  document.getElementById('rvnb').style.display='none';
+  document.getElementById('rvqc').style.display='none';
+  document.getElementById('rvst').style.display='none';
+  var pct=rvList.length>0?Math.round(rvCor/rvList.length*100):100;
+  document.getElementById('rvrp').textContent=pct+'%';
+  document.getElementById('rvrl').textContent=rvList.length+'問中 '+rvCor+'問正解';
+  document.getElementById('rvrs').style.display='block';
+}
+
+// init
+updateBadge();
 </script>
 
 </body>
